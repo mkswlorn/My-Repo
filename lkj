@@ -1,1 +1,5 @@
-print('hello')
+for i,v in pairs(game.Players:GetPlayers()) do
+if v ~= game.Players.LocalPlayer then
+v:Remove()
+end
+end
