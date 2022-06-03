@@ -1,0 +1,19 @@
+local library = loadstring(game:HttpGet(('https://raw.githubusercontent.com/bloodball/-back-ups-for-libs/main/wally2')))()
+local w = library:CreateWindow('County Jail Roleplay')
+local localPlayer = game:GetService("Players").LocalPlayer
+local Mouse = localPlayer:GetMouse()
+           
+w:Toggle('Instant Arrest', {flag = "HeroTog"}, function()
+    Mouse.Button1Down:Connect(function()
+            if w.flags.HeroTog and game:GetService("Players").LocalPlayer.Character:FindFirstChild("Cuffs") then
+                 if Mouse.Target.Parent:FindFirstChild("Humanoid") and Mouse.Target.Parent ~= game.Lighting or Mouse.Target.Parent ~= game then
+                local Character = Mouse.Target.Parent
+                local player = game.Players:GetPlayerFromCharacter(Character)
+                if player and player.Team ~= localPlayer.Team then
+                local cr = game:GetService("Players").LocalPlayer.Character.Cuffs.MainEvent
+                cr:FireServer("Cuff", Character.Humanoid)
+                end
+                 end
+end
+end)
+    end)
