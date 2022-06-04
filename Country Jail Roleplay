@@ -63,30 +63,30 @@ game.Workspace.ChildAdded:Connect(function(child)
 	end
 end)
 w:Toggle('Auto Pickup', {flag = "DropTog"}, function()
-	spawn(function()
-		while w.flags.DropTog do
-			wait()
-			if #dropped > 0 then
-				for i,v in pairs(dropped) do
-					spawn(function()
-						if v.Parent == game.Workspace then
-							if game.Players.LocalPlayer.Character and game.Players.LocalPlayer:DistanceFromCharacter(v:FindFirstChildWhichIsA("Part").Position) < 15 then
-								spawn(function()
-									for i,v in pairs(v:GetChildren()) do
-										if v:IsA("ClickDetector") then
-											fireclickdetector(v)
-										end
-									end
-								end)
+    spawn(function()
+while w.flags.DropTog do
+    wait()
+	if #dropped > 0 then
+		for i,v in pairs(dropped) do
+			spawn(function()
+				if v.Parent == game.Workspace then
+					if game.Players.LocalPlayer.Character and game.Players.LocalPlayer:DistanceFromCharacter(v:FindFirstChildWhichIsA("Part").Position) < 15 then
+						spawn(function()
+							for i,v in pairs(v:GetChildren()) do
+								if v:IsA("ClickDetector") then
+									fireclickdetector(v)
+								end
 							end
-						end
-					end)
+						end)
+					end
 				end
-			else
-				table.remove(dropped, dropped[v])
-			end
+			end)
 		end
-	end)
+	else
+		table.remove(dropped, dropped[v])
+	end
+end
+end)
 end)
 local function removeESP(name)
 	local target = game.Workspace[name]
@@ -183,9 +183,8 @@ w:Toggle('Inventory ESP', {flag = "ESPTog"}, function()
 					if activeESPs[v.Name] == nil and not hasESP(v.Name) then 
 						if hasTools(v) and teamCheck(v) then
 							createESP(v.Name, getTools(v))
-
-
 						end
+						
 					elseif activeESPs[v.Name] ~= nil then
 						if hasTools(v) then
 							if table.unpack(activeESPs[v.Name]) ~= table.unpack(getTools(v)) then
@@ -197,7 +196,7 @@ w:Toggle('Inventory ESP', {flag = "ESPTog"}, function()
 							end
 						end
 					else
-						if hasESP(v.Name) then
+						if activeESPs[v.Name] == nil and hasESP(v.Name) then
 							removeESP(v.Name)
 						end
 					end
