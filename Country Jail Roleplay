@@ -2,160 +2,220 @@ local library = loadstring(game:HttpGet(('https://raw.githubusercontent.com/bloo
 local w = library:CreateWindow('County Jail Roleplay')
 local localPlayer = game:GetService("Players").LocalPlayer
 local Mouse = localPlayer:GetMouse()
-           
-           
-           
-           
-           
-           
-           local activeESPs = {}
+
+
+
+
+
+
+local activeESPs = {}
 local function createESP(name, weapons)
-    local target = game.Workspace[name]
-if target then
-activeESPs[name] = weapons
-local a = Instance.new("BillboardGui",target.Head)
-a.Size = UDim2.new(5,0, 5,0)
-a.Name = "UI"
-a.AlwaysOnTop = true
-local b = Instance.new("Frame",a)
-   b.Size = UDim2.new(1,0, 1,0)
-   b.BackgroundTransparency = 0.4
-b.BorderSizePixel = 0
-local c = Instance.new("TextLabel",b)
-c.Text = table.concat(weapons, ", ")
-c.Size = UDim2.new(1,0, 1,0)
-c.BackgroundTransparency = 1
-c.BorderSizePixel = 0
+	local target = game.Workspace[name]
+	if target then
+		activeESPs[name] = weapons
+		local a = Instance.new("BillboardGui",target.Head)
+		a.Size = UDim2.new(5,0, 5,0)
+		a.Name = "UI"
+		a.AlwaysOnTop = true
+		local b = Instance.new("Frame",a)
+		b.Size = UDim2.new(1,0, 1,0)
+		b.BackgroundTransparency = 0.4
+		b.BorderSizePixel = 0
+		local c = Instance.new("TextLabel",b)
+		c.Text = table.concat(weapons, ", ")
+		c.Size = UDim2.new(1,0, 1,0)
+		c.BackgroundTransparency = 1
+		c.BorderSizePixel = 0
+	end
 end
+local function toolESP(instance)
+	if instance then
+		local a = Instance.new("BillboardGui",instance)
+		a.Size = UDim2.new(5,0, 5,0)
+		a.Name = "UI"
+		a.AlwaysOnTop = true
+		local b = Instance.new("Frame",a)
+		b.Size = UDim2.new(1,0, 1,0)
+		b.BackgroundTransparency = 0.4
+		b.BorderSizePixel = 0
+		local c = Instance.new("TextLabel",b)
+		c.Text = instance.Name
+		c.Size = UDim2.new(1,0, 1,0)
+		c.BackgroundTransparency = 1
+		c.BorderSizePixel = 0
+	end
 end
+local function hasTool(tool)
+	if localPlayer.Character then
+		local bp = localPlayer.Backpack or localPlayer.Character
+		if bp:FindFirstChild(tool) then
+			return true   
+		end
+	end
+end
+local Mouse = game.Players.LocalPlayer:GetMouse()
+local dropped = {}
+local toolz = {"Keycard", "Glock 19", "Glock 17", "P226", "USP Tactical", "Beretta 92FS", "MP5", "M4A1", "G36C", "Uzi", "R870", "Shiv", "Makarov", "MP7", "UMP 40"}
+game.Workspace.ChildAdded:Connect(function(child)
+	if not hasTool(child.Name) and table.find(toolz, child.Name) then
+		table.insert(dropped, child)
+		toolESP(child)
+	end
+end)
+w:Toggle('Auto Pickup', {flag = "DropTog"}, function()
+	spawn(function()
+		while w.flags.DropTog do
+			wait()
+			if #dropped > 0 then
+				for i,v in pairs(dropped) do
+					spawn(function()
+						if v.Parent == game.Workspace then
+							if game.Players.LocalPlayer.Character and game.Players.LocalPlayer:DistanceFromCharacter(v:FindFirstChildWhichIsA("Part").Position) < 15 then
+								spawn(function()
+									for i,v in pairs(v:GetChildren()) do
+										if v:IsA("ClickDetector") then
+											fireclickdetector(v)
+										end
+									end
+								end)
+							end
+						end
+					end)
+				end
+			else
+				table.remove(dropped, dropped[v])
+			end
+		end
+	end)
+end)
 local function removeESP(name)
-    local target = game.Workspace[name]
-    if target then
-        activeESPs[name] = nil
-        if target.Head:FindFirstChild("UI") then
-        target.Head.UI:Destroy()
-        end
-        end
+	local target = game.Workspace[name]
+	if target then
+		activeESPs[name] = nil
+		if target.Head:FindFirstChild("UI") then
+			target.Head.UI:Destroy()
+		end
+	end
 end
 local function hasESP(name)
-    local player = game.Players[name]
-    if player.Character and player ~= nil and player.Character:FindFirstChild("Humanoid") and player.Character.Humanoid.Health > 0 and player.Character:FindFirstChild("Head") then
-     local target = game.Workspace[name]
-    if target then
-    if target.Head:FindFirstChild("UI") then
-        return true
-    
-    end
-    end
-    end
-    end
-local function teamCheck(player)
-if player.Team.Name ~= "Department of Corrections" and player.Team.Name ~= "Criminal" then
-return true
+	local player = game.Players[name]
+	if player.Character and player ~= nil and player.Character:FindFirstChild("Humanoid") and player.Character.Humanoid.Health > 0 and player.Character:FindFirstChild("Head") then
+		local target = game.Workspace[name]
+		if target then
+			if target.Head:FindFirstChild("UI") then
+				return true
+
+			end
+		end
+	end
 end
+local function teamCheck(player)
+	if player.Team.Name ~= "Department of Corrections" and player.Team.Name ~= "Criminal" then
+		return true
+	end
 end
 local function getTools(player)
-if player.Character and player ~= nil and player.Character.Humanoid and player.Character.Humanoid.Health > 0 and player.Character.Head then
-local firsttool = player.Backpack:FindFirstChildWhichIsA("Tool") or player.Character:FindFirstChildWhichIsA("Tool")
-if firsttool then
-    local tools = {}
-    for i,w in pairs(player.Backpack:GetChildren()) do
-        if w:IsA("Tool") then
-        if w.Name ~= "Chicken" and w.Name ~= "Green soup" and w.Name ~= "Brown ?" then
-        table.insert(tools, w.Name)
-        end
-        end
-    end
-    for i,w in pairs(player.Character:GetChildren()) do
-        if w:IsA("Tool") and w.Name ~= "Chicken" and w.Name ~= "Green soup" and w.Name ~= "Brown ?" then
-                table.insert(tools, w.Name)
-        
-        end
-    end
-    table.sort(tools, function(a,b)
-	return a:lower() < b:lower()
-end)
-    if tools ~= {} then
-    return tools
-end
-end
-    end
+	if player.Character and player ~= nil and player.Character.Humanoid and player.Character.Humanoid.Health > 0 and player.Character.Head then
+		local firsttool = player.Backpack:FindFirstChildWhichIsA("Tool") or player.Character:FindFirstChildWhichIsA("Tool")
+		if firsttool then
+			local tools = {}
+			for i,w in pairs(player.Backpack:GetChildren()) do
+				if w:IsA("Tool") then
+					if w.Name ~= "Chicken" and w.Name ~= "Green soup" and w.Name ~= "Brown ?" then
+						table.insert(tools, w.Name)
+					end
+				end
+			end
+			for i,w in pairs(player.Character:GetChildren()) do
+				if w:IsA("Tool") and w.Name ~= "Chicken" and w.Name ~= "Green soup" and w.Name ~= "Brown ?" then
+					table.insert(tools, w.Name)
+
+				end
+			end
+			table.sort(tools, function(a,b)
+				return a:lower() < b:lower()
+			end)
+			if tools ~= {} then
+				return tools
+			end
+		end
+	end
 end
 
 local function hasTools(player)
-    if player.Character and player ~= nil and player.Character:FindFirstChild("Humanoid") and player.Character.Humanoid.Health > 0 and player.Character:FindFirstChild("Head") then
-local firsttool = player.Backpack:FindFirstChildWhichIsA("Tool") or player.Character:FindFirstChildWhichIsA("Tool")
-if firsttool and firsttool.Name ~= "Chicken" and firsttool.Name ~= "Green soup" and firsttool.Name ~= "Brown ?" then
-    return true
-    end
+	if player.Character and player ~= nil and player.Character:FindFirstChild("Humanoid") and player.Character.Humanoid.Health > 0 and player.Character:FindFirstChild("Head") then
+		local firsttool = player.Backpack:FindFirstChildWhichIsA("Tool") or player.Character:FindFirstChildWhichIsA("Tool")
+		if firsttool and firsttool.Name ~= "Chicken" and firsttool.Name ~= "Green soup" and firsttool.Name ~= "Brown ?" then
+			return true
+		end
 
+	end
 end
-end
-           
-           
-           
-           
-           
-           
-           
-           
+
+
+
+
+
+
+
+
 w:Toggle('Instant Arrest', {flag = "ArrestTog"}, function()
-    Mouse.Button1Down:Connect(function()
-            if w.flags.ArrestTog and game:GetService("Players").LocalPlayer.Character:FindFirstChild("Cuffs") then
-                 if Mouse.Target.Parent:FindFirstChild("Humanoid") and Mouse.Target.Parent ~= game.Lighting or Mouse.Target.Parent ~= game then
-                local Character = Mouse.Target.Parent
-                local player = game.Players:GetPlayerFromCharacter(Character)
-                if player and player.Team ~= localPlayer.Team then
-                local cr = game:GetService("Players").LocalPlayer.Character.Cuffs.MainEvent
-                cr:FireServer("Cuff", Character.Humanoid)
-                end
-                 end
-end
-end)
+	Mouse.Button1Down:Connect(function()
+		if w.flags.ArrestTog and game:GetService("Players").LocalPlayer.Character:FindFirstChild("Cuffs") then
+			if Mouse.Target.Parent:FindFirstChild("Humanoid") and Mouse.Target.Parent ~= game.Lighting or Mouse.Target.Parent ~= game then
+				local Character = Mouse.Target.Parent
+				local player = game.Players:GetPlayerFromCharacter(Character)
+				if player and player.Team ~= localPlayer.Team then
+					local cr = game:GetService("Players").LocalPlayer.Character.Cuffs.MainEvent
+					cr:FireServer("Cuff", Character.Humanoid)
+				end
+			end
+		end
+	end)
 end)
 
 w:Toggle('Inventory ESP', {flag = "ESPTog"}, function()
-    spawn(function()
-    while w.flags.ESPTog do 
-        wait(1)
-    spawn(function() 
-for i,v in pairs(game.Players:GetPlayers()) do 
-    if activeESPs[v.Name] == nil and not hasESP(v.Name) then 
-        if hasTools(v) and teamCheck(v) then
-createESP(v.Name, getTools(v))
+	spawn(function()
+		while w.flags.ESPTog do 
+			wait(1)
+			spawn(function() 
+				for i,v in pairs(game.Players:GetPlayers()) do 
+					if activeESPs[v.Name] == nil and not hasESP(v.Name) then 
+						if hasTools(v) and teamCheck(v) then
+							createESP(v.Name, getTools(v))
 
 
-    end
-elseif activeESPs[v.Name] ~= nil then
-    if hasTools(v) then
-    if table.unpack(activeESPs[v.Name]) ~= table.unpack(getTools(v)) then
-if hasESP(v.Name) then
-removeESP(v.Name)
-else
-activeESPs[v.Name] = nil
-end
-    end
-    end
-    else
-      if hasESP(v.Name) then
-removeESP(v.Name)
-end
-end
-end
-end)
-end
-end)
+						end
+					elseif activeESPs[v.Name] ~= nil then
+						if hasTools(v) then
+							if table.unpack(activeESPs[v.Name]) ~= table.unpack(getTools(v)) then
+								if hasESP(v.Name) then
+									removeESP(v.Name)
+								else
+									activeESPs[v.Name] = nil
+								end
+							end
+						end
+					else
+						if hasESP(v.Name) then
+							removeESP(v.Name)
+						end
+					end
+				end
+			end)
+		end
+	end)
 end)
 
 while wait() do
-if not w.flags.ESPTog then
-for i,v in pairs(game.Players:GetPlayers()) do 
-      if hasESP(v.Name) then
-removeESP(v.Name)
-else
-    activeESPs[v.Name] = nil
-end
+	if not w.flags.ESPTog then
+		for i,v in pairs(game.Players:GetPlayers()) do 
+			if hasESP(v.Name) then
+				removeESP(v.Name)
+			else
+				activeESPs[v.Name] = nil
+			end
 
+		end
+	end
 end
-    end
-    end
