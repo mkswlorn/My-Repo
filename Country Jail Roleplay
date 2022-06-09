@@ -1,11 +1,8 @@
 local library = loadstring(game:HttpGet(('https://raw.githubusercontent.com/bloodball/-back-ups-for-libs/main/wally2')))()
+library.options.underlinecolor = Color3.fromRGB(106, 13, 173)
 local w = library:CreateWindow('County Jail Roleplay')
-local localPlayer = game:GetService("Players").LocalPlayer
-local Mouse = localPlayer:GetMouse()
-
-
-
-
+local lp = game.Players.LocalPlayer
+local Mouse = lp:GetMouse()
 
 
 local activeESPs = {}
@@ -24,45 +21,98 @@ local function createESP(name, weapons)
 		local c = Instance.new("TextLabel",b)
 		c.Text = table.concat(weapons, ", ")
 		c.Size = UDim2.new(1,0, 1,0)
+		c.TextSize = 8
 		c.BackgroundTransparency = 1
 		c.BorderSizePixel = 0
 	end
 end
-local function toolESP(instance)
-	if instance then
-		local a = Instance.new("BillboardGui",instance)
-		a.Size = UDim2.new(5,0, 5,0)
-		a.Name = "UI"
-		a.AlwaysOnTop = true
-		local b = Instance.new("Frame",a)
-		b.Size = UDim2.new(1,0, 1,0)
-		b.BackgroundTransparency = 0.4
-		b.BorderSizePixel = 0
-		local c = Instance.new("TextLabel",b)
-		c.Text = instance.Name
-		c.Size = UDim2.new(1,0, 1,0)
-		c.BackgroundTransparency = 1
-		c.BorderSizePixel = 0
-	end
-end
+
 local function hasTool(tool)
-	if localPlayer.Character then
-		local bp = localPlayer.Backpack or localPlayer.Character
+	if lp.Character then
+		local bp = lp.Backpack or lp.Character
 		if bp:FindFirstChild(tool) then
 			return true   
 		end
 	end
 end
-local Mouse = game.Players.LocalPlayer:GetMouse()
+local Mouse = lp:GetMouse()
 local dropped = {}
 local toolz = {"Keycard", "Glock 19", "Glock 17", "P226", "USP Tactical", "Beretta 92FS", "MP5", "M4A1", "G36C", "Uzi", "R870", "Shiv", "Makarov", "MP7", "UMP 40"}
 game.Workspace.ChildAdded:Connect(function(child)
 	if not hasTool(child.Name) and table.find(toolz, child.Name) then
 		table.insert(dropped, child)
-		toolESP(child)
 	end
 end)
-w:Toggle('Auto Pickup', {flag = "DropTog"}, function()
+
+ w:Button('Auto XP', function()
+
+for i,v in pairs(getconnections(lp.Idled)) do
+v:Disable()
+end
+local VirtualUser=game:service'VirtualUser'
+game:service'Players'.LocalPlayer.Idled:connect(function()
+VirtualUser:CaptureController()
+VirtualUser:ClickButton2(Vector2.new())
+end)
+
+pcall(function() lp.PlayerGui.Data.AFK.AFKHandler:Destroy() end)
+for i=1,5 do 
+spawn(function()
+while wait(1) do
+lp.PlayerGui.Data.AFK.RemoteEvent:FireServer(false)
+end
+end)
+ end
+     
+     
+ end)
+ local a = false
+ w:Button('No Recoil', function()
+     if not a then
+         a = true
+     while a do
+     for i,v in pairs(getgc()) do
+    if type(v) == "function"  and islclosure(v) and not is_synapse_function(v) then
+        if debug.getinfo(v).name == "FireInTheHole" and getupvalues(v).value ~= 0 then 
+            debug.setupvalue(v, 14, 0)
+            debug.setupvalue(v, 15, 0)
+        end
+    end
+end
+wait(5)
+end
+end
+
+ end)
+ 
+ 
+w:Button('Instant Arrest', function()
+	Mouse.Button1Down:Connect(function()
+		if lp.Character and lp.Character:FindFirstChild("Cuffs") then
+			if Mouse.Target.Parent:FindFirstChild("Humanoid") and Mouse.Target.Parent ~= game.Lighting or Mouse.Target.Parent ~= game then
+				local Character = Mouse.Target.Parent
+				local player = game.Players:GetPlayerFromCharacter(Character)
+				if player and player.Team ~= lp.Team then
+					local cr = lp.Character.Cuffs.MainEvent
+					cr:FireServer("Cuff", Character.Humanoid)
+				end
+			end
+		end
+	end)
+end)
+w:Button('Always Innocent', function()
+local mt = getrawmetatable(game) -- get game's metatable without invoking __metatable
+local oldindex = mt.__index -- store a copy of the original metamethod
+setreadonly(mt, false) -- unlock the metatable so we can modify it
+mt.__index = newcclosure(function(self, k) -- The original metamethod is a C closure so we need to wrap the function in one
+   if tostring(self) == "isInnocent" and k == "Value" then -- check if WalkSpeed is accessed from any instance
+       return true
+   end
+   return oldindex(self, k) -- use the old metamethod if WalkSpeed is not being accessed
+end)
+setreadonly(mt, true) -- relock the metatable
+end)
+w:Toggle('Pickup Tools', {flag = "DropTog"}, function()
     spawn(function()
 while w.flags.DropTog do
     wait()
@@ -70,7 +120,7 @@ while w.flags.DropTog do
 		for i,v in pairs(dropped) do
 			spawn(function()
 				if v.Parent == game.Workspace then
-					if game.Players.LocalPlayer.Character and game.Players.LocalPlayer:DistanceFromCharacter(v:FindFirstChildWhichIsA("Part").Position) < 15 then
+					if lp.Character and lp:DistanceFromCharacter(v:FindFirstChildWhichIsA("Part").Position) < 15 then
 						spawn(function()
 							for i,v in pairs(v:GetChildren()) do
 								if v:IsA("ClickDetector") then
@@ -100,7 +150,7 @@ end
 local function hasESP(name)
 	local player = game.Players[name]
 	if player.Character and player ~= nil and player.Character:FindFirstChild("Humanoid") and player.Character.Humanoid.Health > 0 and player.Character:FindFirstChild("Head") then
-		local target = game.Workspace[name]
+		local target = game.Workspace:FindFirstChild(name)
 		if target then
 			if target.Head:FindFirstChild("UI") then
 				return true
@@ -159,20 +209,6 @@ end
 
 
 
-w:Toggle('Instant Arrest', {flag = "ArrestTog"}, function()
-	Mouse.Button1Down:Connect(function()
-		if w.flags.ArrestTog and game:GetService("Players").LocalPlayer.Character:FindFirstChild("Cuffs") then
-			if Mouse.Target.Parent:FindFirstChild("Humanoid") and Mouse.Target.Parent ~= game.Lighting or Mouse.Target.Parent ~= game then
-				local Character = Mouse.Target.Parent
-				local player = game.Players:GetPlayerFromCharacter(Character)
-				if player and player.Team ~= localPlayer.Team then
-					local cr = game:GetService("Players").LocalPlayer.Character.Cuffs.MainEvent
-					cr:FireServer("Cuff", Character.Humanoid)
-				end
-			end
-		end
-	end)
-end)
 
 w:Toggle('Inventory ESP', {flag = "ESPTog"}, function()
 	spawn(function()
@@ -204,6 +240,35 @@ w:Toggle('Inventory ESP', {flag = "ESPTog"}, function()
 			end)
 		end
 	end)
+end)
+local teleports = {
+    ["Crim Base"] = CFrame.new(340.724518, -6.59994602, -1403.78088, 0.528508544, -3.52200913e-09, 0.848927975, 1.36208322e-09, 1, 3.3007943e-09, -0.848927975, -5.88187443e-10, 0.528508544);
+    ["Afk"] = CFrame.new(427.432648, -3.00000048, -182.798706, -0.44808042, -2.85733144e-08, -0.893993258, 2.56979646e-08, 1, -4.48415811e-08, 0.893993258, -4.30664429e-08, -0.44808042);
+    ["Max"] = CFrame.new(-280.033295, 29.1895714, -1065.19312, 0.978691697, -4.35876046e-08, 0.205335334, 5.41562777e-08, 1, -4.58503386e-08, -0.205335334, 5.59935422e-08, 0.978691697);
+   
+}
+function teleport(location)
+    local lp = game.Players.LocalPlayer
+ lp.PlayerGui.Events.ResetEvent:FireServer("Reset")
+print(teleports[location])
+wait(7)
+for i=1,65 do
+    wait(0.05)
+    pcall(function()
+        game:GetService("Workspace")[lp.Name].HumanoidRootPart.CFrame = teleports[location]
+end)
+end   
+    
+    end
+local new = w:Section("Teleports")
+ w:Button('Crim Base', function()
+teleport("Crim Base")
+end)
+w:Button('Maximum Security', function()
+    teleport("Max")
+end)
+ w:Button('XP Farm', function()
+teleport("Afk")
 end)
 
 while wait() do
