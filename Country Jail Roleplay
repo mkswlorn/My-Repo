@@ -321,6 +321,12 @@ end)
 for i,v in pairs(game.Players:GetPlayers()) do
 	if v:IsInGroup(13902860) then
 		if v:GetRankInGroup(13902860) > 50 then
+		       local fard = Instance.new("Sound", game.Workspace)
+        	fard.SoundId = "rbxassetid://4809574295"
+        	fard.Name = "Fard"
+			fard.PlaybackSpeed = 0.7
+			fard.Volume = 2
+			fard:Play()
 			game:GetService("StarterGui"):SetCore("SendNotification",{
 				Title = "Ayo be careful",
 				Text = "Mod detected in server", 
@@ -337,8 +343,8 @@ game.Players.PlayerAdded:Connect(function(v)
 		     local fard = Instance.new("Sound", game.Workspace)
         	fard.SoundId = "rbxassetid://4809574295"
         	fard.Name = "Fard"
-			fard.PlaybackSpeed = 0.7
-			fard.Volume = 1
+    			fard.PlaybackSpeed = 0.7
+			fard.Volume = 2
 			fard:Play()
 			game:GetService("StarterGui"):SetCore("SendNotification",{
 				Title = "Ayo be careful",
