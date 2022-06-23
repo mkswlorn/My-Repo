@@ -50,7 +50,7 @@ w:Button('AC Bypass', function()
      
 	game:GetService("StarterGui"):SetCore("SendNotification",{
 				Title = "Bypass Success",
-				Text = "Do whatever u want now.", 
+				Text = "", 
 				Icon = "rbxassetid://7752701233" 
 			})
 	local mt = getrawmetatable(game);
