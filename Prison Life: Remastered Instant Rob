@@ -1,9 +1,9 @@
 local library = loadstring(game:HttpGet(('https://raw.githubusercontent.com/bloodball/-back-ups-for-libs/main/wally2')))()
 library.options.underlinecolor = Color3.fromRGB(106, 13, 173)
-local w = library:CreateWindow('Prison Life Remastered')
+local w = library:CreateWindow('Instant Rob')
 local lp = game.Players.LocalPlayer
 
-w:Toggle('Instant Rob', {flag = "instarob"}, function()
+w:Toggle('Instant Rob', {flag = "Activate"}, function()
 	for i,v in pairs(game.Workspace.Map.CITY.JewerlyStore:GetDescendants()) do
 		if v.Name == "TouchInterest" then
 			v:Destroy()
