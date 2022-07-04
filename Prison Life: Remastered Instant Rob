@@ -1,9 +1,9 @@
 local library = loadstring(game:HttpGet(('https://raw.githubusercontent.com/bloodball/-back-ups-for-libs/main/wally2')))()
 library.options.underlinecolor = Color3.fromRGB(106, 13, 173)
-local w = library:CreateWindow('Instant Rob')
+local w = library:CreateWindow('Prison Life GUI')
 local lp = game.Players.LocalPlayer
 
-w:Toggle('Activate', {flag = "instarob"}, function()
+w:Toggle('Insta Rob', {flag = "instarob"}, function()
 	for i,v in pairs(game.Workspace.Map.CITY.JewerlyStore:GetDescendants()) do
 		if v.Name == "TouchInterest" then
 			v:Destroy()
@@ -82,24 +82,30 @@ game.Workspace.ChildAdded:Connect(function(child)
 		end
 	end)
 end)
-
+--[[
+while wait() do
 local bank =  game:GetService("Workspace").Map.CITY.Bank.LED
-bank:GetPropertyChangedSignal("BrickColor"):Connect(function()
-if bank.BrickColor == BrickColor.new("Lime Green") then
+if not ab and bank.BrickColor == BrickColor.new("Lime Green") then
+    ab = true
     	game:GetService("StarterGui"):SetCore("SendNotification",{
 				Title = "Bank has reopened",
 				Text = "", 
 				Duration = 10;
 			})
+else
+    ab = false
     end
+end
 end)
 local jew = game:GetService("Workspace").Map.CITY.JewerlyStore.Main.LED
-jew:GetPropertyChangedSignal("BrickColor"):Connect(function()
-if jew.BrickColor == BrickColor.new("Lime Green") then
+if not ab and jew.BrickColor == BrickColor.new("Lime Green") then
+        ab = true
     	game:GetService("StarterGui"):SetCore("SendNotification",{
 				Title = "Jewerly has reopened",
 				Text = "", 
 				Duration = 10;
 			})
-    end
-end)
+    else
+     ab = false   
+        end
+end--]]
