@@ -1,15 +1,15 @@
 local library = loadstring(game:HttpGet(('https://raw.githubusercontent.com/bloodball/-back-ups-for-libs/main/wally2')))()
 library.options.underlinecolor = Color3.fromRGB(106, 13, 173)
-local w = library:CreateWindow('Prison Life GUI')
+local w = library:CreateWindow('CS Prison Life')
 local lp = game.Players.LocalPlayer
 
 w:Toggle('Insta Rob', {flag = "instarob"}, function()
-	for i,v in pairs(game.Workspace.Map.CITY.JewerlyStore:GetDescendants()) do
+	for i,v in pairs(game.Lighting.CityFolder.JewerlyStore:GetDescendants()) do
 		if v.Name == "TouchInterest" then
 			v:Destroy()
 		end
 	end
-	for i,v in pairs(game:GetService("Workspace").Map.CITY.Bank.Laser:GetChildren()) do
+	for i,v in pairs(game.Lighting.CityFolder.Bank.Laser:GetChildren()) do
 		if v:FindFirstChild("TouchInterest") then
 			v.TouchInterest:Destroy()
 		end
@@ -29,7 +29,7 @@ spawn(function()
 					end
 				end
 			end)
-			for i,v in pairs(game.Workspace.Map.CITY.ATM:GetDescendants()) do
+			for i,v in pairs(game.Workspace.Map.ATM:GetDescendants()) do
 				if v.Name == "ProximityPrompt" and lp:DistanceFromCharacter(v.Parent.Parent.Position) < 7 then
 					if lp.Backpack:FindFirstChild("Crowbar") and lp.Character and lp.Character:FindFirstChild("Humanoid") then
 						lp.Character.Humanoid:EquipTool(lp.Backpack.Crowbar)
@@ -44,7 +44,7 @@ spawn(function()
 					end
 				end
 			end
-			for i,v in pairs(game.Workspace.Map.CITY.JewerlyStore:GetDescendants()) do
+			for i,v in pairs(game.Lighting.CityFolder.JewerlyStore:GetDescendants()) do
 				if v.Name == "ProximityPrompt" and lp:DistanceFromCharacter(v.Parent.Parent.Position) < 5 then
 					if lp.Backpack:FindFirstChild("Crowbar") and lp.Character and lp.Character:FindFirstChild("Humanoid") then
 						lp.Character.Humanoid:EquipTool(lp.Backpack.Crowbar)
@@ -59,7 +59,7 @@ spawn(function()
 					end
 				end
 			end
-			for i,v in pairs(game.Workspace.Map.CITY.Bank:GetDescendants()) do
+			for i,v in pairs(game.Lighting.CityFolder.Bank:GetDescendants()) do
 				if v.Name == "ProximityPrompt" and lp:DistanceFromCharacter(v.Parent.Parent.Position) < 5 then
 					if lp.Backpack:FindFirstChild("Crowbar") and lp.Character and lp.Character:FindFirstChild("Humanoid") then
 						lp.Character.Humanoid:EquipTool(lp.Backpack.Crowbar)
@@ -82,30 +82,3 @@ game.Workspace.ChildAdded:Connect(function(child)
 		end
 	end)
 end)
---[[
-while wait() do
-local bank =  game:GetService("Workspace").Map.CITY.Bank.LED
-if not ab and bank.BrickColor == BrickColor.new("Lime Green") then
-    ab = true
-    	game:GetService("StarterGui"):SetCore("SendNotification",{
-				Title = "Bank has reopened",
-				Text = "", 
-				Duration = 10;
-			})
-else
-    ab = false
-    end
-end
-end)
-local jew = game:GetService("Workspace").Map.CITY.JewerlyStore.Main.LED
-if not ab and jew.BrickColor == BrickColor.new("Lime Green") then
-        ab = true
-    	game:GetService("StarterGui"):SetCore("SendNotification",{
-				Title = "Jewerly has reopened",
-				Text = "", 
-				Duration = 10;
-			})
-    else
-     ab = false   
-        end
-end--]]
