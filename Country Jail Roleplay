@@ -45,7 +45,7 @@ local function teamCheck(player)
 end
 game.Workspace.ChildAdded:Connect(function(child)
 	if  table.find(toolz, child.Name) then
-		if teamCheck(lp) == false then
+		if teamCheck(lp) ~= true then
 			table.insert(dropped, child)
 		else 
 			if not hasTool(child.Name) then
