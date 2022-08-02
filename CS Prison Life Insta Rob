@@ -1,84 +1,389 @@
+
 local library = loadstring(game:HttpGet(('https://raw.githubusercontent.com/bloodball/-back-ups-for-libs/main/wally2')))()
 library.options.underlinecolor = Color3.fromRGB(106, 13, 173)
-local w = library:CreateWindow('CS Prison Life')
+local w = library:CreateWindow('County Jail Roleplay')
 local lp = game.Players.LocalPlayer
+local Mouse = lp:GetMouse()
 
-w:Toggle('Insta Rob', {flag = "instarob"}, function()
-	for i,v in pairs(game.Lighting.CityFolder.JewerlyStore:GetDescendants()) do
-		if v.Name == "TouchInterest" then
-			v:Destroy()
+local activeESPs = {}
+local function createESP(name, weapons)
+	local target = game.Workspace[name]
+	if target then
+		activeESPs[name] = weapons
+		local a = Instance.new("BillboardGui",target.Head)
+		a.Size = UDim2.new(5,0, 5,0)
+		a.Name = "UI"
+		a.AlwaysOnTop = true
+		local b = Instance.new("Frame",a)
+		b.Size = UDim2.new(1,0, 1,0)
+		b.BackgroundTransparency = 0.4
+		b.BorderSizePixel = 0
+		local c = Instance.new("TextLabel",b)
+		c.Text = table.concat(weapons, ", ")
+		c.Size = UDim2.new(1,0, 1,0)
+		c.TextSize = 8
+		c.BackgroundTransparency = 1
+		c.BorderSizePixel = 0
+	end
+end
+
+local function hasTool(tool)
+	if lp.Character then
+		local bp = lp.Backpack or lp.Character
+		if bp:FindFirstChild(tool) then
+			return true   
 		end
 	end
-	for i,v in pairs(game.Lighting.CityFolder.Bank.Laser:GetChildren()) do
-		if v:FindFirstChild("TouchInterest") then
-			v.TouchInterest:Destroy()
-		end
+end
+local Mouse = lp:GetMouse()
+local dropped = {}
+local toolz = {"Keycard", "Glock 19", "Glock 17", "P226", "USP Tactical", "Beretta 92FS", "MP5", "M4A1", "G36C", "Uzi", "R870", "Shiv", "Makarov", "MP7", "UMP 40"}
+local function teamCheck(player)
+	if player.Team.Name ~= "Department of Corrections" and player.Team.Name ~= "Criminal" then
+		return true
 	end
-end)
-spawn(function()
-	while wait() do
-		if w.flags.instarob then
-			wait(0.1)
-			spawn(function()
-				for i,v in pairs(game:GetService("Workspace").Map.Casino:GetDescendants()) do
-					if v.Name == "ProximityPrompt" and (lp:DistanceFromCharacter(v.Parent.Parent.Position) < 7) then
-						if lp.Backpack:FindFirstChild("Crowbar") and lp.Character and lp.Character:FindFirstChild("Humanoid") then
-							lp.Character.Humanoid:EquipTool(lp.Backpack.Crowbar)
-						end
-						fireproximityprompt(v)
-					end
-				end
-			end)
-			for i,v in pairs(game.Workspace.Map.ATM:GetDescendants()) do
-				if v.Name == "ProximityPrompt" and lp:DistanceFromCharacter(v.Parent.Parent.Position) < 7 then
-					if lp.Backpack:FindFirstChild("Crowbar") and lp.Character and lp.Character:FindFirstChild("Humanoid") then
-						lp.Character.Humanoid:EquipTool(lp.Backpack.Crowbar)
-					end
-					fireproximityprompt(v)
-				end
-			end
-			if game.Workspace:FindFirstChild("JewerlyStoreEarning") then
-				for i,v in pairs(game.Workspace.JewerlyStoreEarning:GetDescendants()) do
-					if v.Name == "ProximityPrompt" and lp:DistanceFromCharacter(v.Parent.Parent.Position) < 15 then
-						fireproximityprompt(v)
-					end
-				end
-			end
-			for i,v in pairs(game.Lighting.CityFolder.JewerlyStore:GetDescendants()) do
-				if v.Name == "ProximityPrompt" and lp:DistanceFromCharacter(v.Parent.Parent.Position) < 5 then
-					if lp.Backpack:FindFirstChild("Crowbar") and lp.Character and lp.Character:FindFirstChild("Humanoid") then
-						lp.Character.Humanoid:EquipTool(lp.Backpack.Crowbar)
-					end
-					fireproximityprompt(v)
-				end
-			end
-			if game.Workspace:FindFirstChild("BankEarning") then
-				for i,v in pairs(game:GetService("Workspace").BankEarning:GetDescendants()) do
-					if v.Name == "ProximityPrompt" and lp:DistanceFromCharacter(v.Parent.Parent.Position) < 15 then
-						fireproximityprompt(v)
-					end
-				end
-			end
-			for i,v in pairs(game.Lighting.CityFolder.Bank:GetDescendants()) do
-				if v.Name == "ProximityPrompt" and lp:DistanceFromCharacter(v.Parent.Parent.Position) < 5 then
-					if lp.Backpack:FindFirstChild("Crowbar") and lp.Character and lp.Character:FindFirstChild("Humanoid") then
-						lp.Character.Humanoid:EquipTool(lp.Backpack.Crowbar)
-					end
-					fireproximityprompt(v)
-				end
-			end
-		end
-	end
-end)
+end
 game.Workspace.ChildAdded:Connect(function(child)
+	if  table.find(toolz, child.Name) then
+		if teamCheck(lp) == false then
+			table.insert(dropped, child)
+		else 
+			if not hasTool(child.Name) then
+				table.insert(dropped, child)
+			end
+		end
+	end
+end)
+local ap = false;
+w:Button('AC Bypass', function()
+	if ap == false then
+		ap = true
+
+		game:GetService("StarterGui"):SetCore("SendNotification",{
+			Title = "Bypass Success",
+			Text = "", 
+			Icon = "rbxassetid://7752701233" 
+		})
+		local mt = getrawmetatable(game);
+		local old = mt.__namecall
+		setreadonly(mt,false)
+		mt.__namecall = newcclosure(function(remote,...)
+			args = {...}
+			method = tostring(getnamecallmethod())
+			if method == "FireServer" and tostring(remote) == "Exploits" then 
+				return wait(9e9)
+			end
+			return old(remote,...)
+		end)
+		setreadonly(mt,true)
+	end
+end)
+w:Button('Auto XP', function()
+
+	for i,v in pairs(getconnections(lp.Idled)) do
+		v:Disable()
+	end
+	local VirtualUser=game:service'VirtualUser'
+	game:service'Players'.LocalPlayer.Idled:connect(function()
+		VirtualUser:CaptureController()
+		VirtualUser:ClickButton2(Vector2.new())
+	end)
+
+	pcall(function() lp.PlayerGui.Data.AFK.AFKHandler:Destroy() end)
+	for i=1,5 do 
+		spawn(function()
+			while wait(1) do
+				lp.PlayerGui.Data.AFK.RemoteEvent:FireServer(false)
+			end
+		end)
+	end
+
+
+end)
+local a = false
+w:Button('No Recoil', function()
+	if not a then
+		a = true
+		while a do
+			for i,v in pairs(getgc()) do
+				if type(v) == "function"  and islclosure(v) and not is_synapse_function(v) then
+					if debug.getinfo(v).name == "FireInTheHole" and getupvalues(v).value ~= 0 then 
+						debug.setupvalue(v, 14, 0)
+						debug.setupvalue(v, 15, 0)
+					end
+				end
+			end
+			wait(5)
+		end
+	end
+
+end)
+
+
+w:Button('Instant Arrest', function()
+	Mouse.Button1Down:Connect(function()
+		if lp.Character and lp.Character:FindFirstChild("Cuffs") then
+			if Mouse.Target.Parent:FindFirstChild("Humanoid") and Mouse.Target.Parent ~= game.Lighting or Mouse.Target.Parent ~= game then
+				local Character = Mouse.Target.Parent
+				local player = game.Players:GetPlayerFromCharacter(Character)
+				if player and player.Team ~= lp.Team then
+					local cr = lp.Character.Cuffs.MainEvent
+					cr:FireServer("Cuff", Character.Humanoid)
+				end
+			end
+		end
+	end)
 	spawn(function()
-		while w.flags.instarob and child do
-			wait(0.1)
-			for i,v in pairs(child:GetDescendants()) do
-				if v.Name == "ProximityPrompt" then
-					fireproximityprompt(v)
+		while wait(0.05) do
+			for i,v in pairs(game.Players:GetPlayers()) do 
+				if lp.Character and v.Character and v.Team.Name == "Criminal" and v.Character:FindFirstChild("Humanoid") and lp:DistanceFromCharacter(v.Character.Head.Position) < 5 then
+					pcall(function()
+						local cr = lp.Character.Cuffs.MainEvent
+						cr:FireServer("Cuff", v.Character.Humanoid)
+
+					end)
 				end
 			end
 		end
 	end)
 end)
+
+w:Toggle('Hide Name', {flag = "hidename"}, function()
+	spawn(function()
+		while w.flags.hidename do wait()
+			if lp.Character and lp.Character:FindFirstChild("Head") and lp.Character.Head:FindFirstChild("OverheadGui") then
+				lp.Character.Head.OverheadGui:Destroy()
+			end
+		end
+	end)
+
+
+end)
+local oldstate;
+w:Toggle('No Stun', {flag = "NoStun"}, function(a)
+	spawn(function()
+		while wait() do
+			if lp.Character and lp.Character:FindFirstChild("Stuns") then
+				if lp.Character.Stuns:FindFirstChildOfClass("StringValue") then
+					lp.Character:FindFirstChildOfClass('Humanoid').PlatformStand = false
+					game.StarterGui:SetCoreGuiEnabled(2, true)
+				end
+			end
+			if lp.PlayerGui:FindFirstChild("HitMarkerGui") and lp.PlayerGui.HitMarkerGui:FindFirstChild("Pepper") then
+				lp.PlayerGui.HitMarkerGui.Pepper:Destroy()   
+			end
+		end
+	end)
+end)
+
+w:Toggle('Pickup Tools', {flag = "DropTog"}, function()
+	spawn(function()
+		while w.flags.DropTog do
+			wait()
+			if #dropped > 0 then
+				for i,v in pairs(dropped) do
+					spawn(function()
+						if v.Parent == game.Workspace then
+							if lp.Character and lp:DistanceFromCharacter(v:FindFirstChildWhichIsA("Part").Position) < 15 then
+								spawn(function()
+									for i,v in pairs(v:GetChildren()) do
+										if v:IsA("ClickDetector") then
+											fireclickdetector(v)
+										end
+									end
+								end)
+							end
+						end
+					end)
+				end
+			else
+				table.remove(dropped, dropped[v])
+			end
+		end
+	end)
+end)
+local function removeESP(name)
+	local target = game.Workspace[name]
+	if target then
+		activeESPs[name] = nil
+		if target.Head:FindFirstChild("UI") then
+			target.Head.UI:Destroy()
+		end
+	end
+end
+local function hasESP(name)
+	local player = game.Players[name]
+	if player.Character and player ~= nil and player.Character:FindFirstChild("Humanoid") and player.Character.Humanoid.Health > 0 and player.Character:FindFirstChild("Head") then
+		local target = game.Workspace:FindFirstChild(name)
+		if target then
+			if target.Head:FindFirstChild("UI") then
+				return true
+
+			end
+		end
+	end
+end
+local function getTools(player)
+	if player.Character and player ~= nil and player.Character.Humanoid and player.Character.Humanoid.Health > 0 and player.Character.Head then
+		local firsttool = player.Backpack:FindFirstChildWhichIsA("Tool") or player.Character:FindFirstChildWhichIsA("Tool")
+		if firsttool then
+			local tools = {}
+			for i,w in pairs(player.Backpack:GetChildren()) do
+				if w:IsA("Tool") then
+					if w.Name ~= "Chicken" and w.Name ~= "Green soup" and w.Name ~= "Brown ?" then
+						table.insert(tools, w.Name)
+					end
+				end
+			end
+			for i,w in pairs(player.Character:GetChildren()) do
+				if w:IsA("Tool") and w.Name ~= "Chicken" and w.Name ~= "Green soup" and w.Name ~= "Brown ?" then
+					table.insert(tools, w.Name)
+
+				end
+			end
+			table.sort(tools, function(a,b)
+				return a:lower() < b:lower()
+			end)
+			if tools ~= {} then
+				return tools
+			end
+		end
+	end
+end
+
+local function hasTools(player)
+	if player.Character and player ~= nil and player.Character:FindFirstChild("Humanoid") and player.Character.Humanoid.Health > 0 and player.Character:FindFirstChild("Head") then
+		local firsttool = player.Backpack:FindFirstChildWhichIsA("Tool") or player.Character:FindFirstChildWhichIsA("Tool")
+		if firsttool and firsttool.Name ~= "Chicken" and firsttool.Name ~= "Green soup" and firsttool.Name ~= "Brown ?" then
+			return true
+		end
+
+	end
+end
+
+
+
+
+
+
+
+
+
+w:Toggle('Inventory ESP', {flag = "ESPTog"}, function()
+	spawn(function()
+		while w.flags.ESPTog do 
+			wait(1)
+			spawn(function() 
+				for i,v in pairs(game.Players:GetPlayers()) do 
+					if activeESPs[v.Name] == nil and not hasESP(v.Name) then 
+						if hasTools(v) and teamCheck(v) then
+							createESP(v.Name, getTools(v))
+						end
+
+					elseif activeESPs[v.Name] ~= nil then
+						if hasTools(v) then
+							if table.unpack(activeESPs[v.Name]) ~= table.unpack(getTools(v)) then
+								if hasESP(v.Name) then
+									removeESP(v.Name)
+								else
+									activeESPs[v.Name] = nil
+								end
+							end
+						end
+					else
+						if activeESPs[v.Name] == nil and hasESP(v.Name) then
+							removeESP(v.Name)
+						end
+					end
+				end
+			end)
+		end
+	end)
+end)
+local teleports = {
+	["Crim Base"] = CFrame.new(340.724518, -6.59994602, -1403.78088, 0.528508544, -3.52200913e-09, 0.848927975, 1.36208322e-09, 1, 3.3007943e-09, -0.848927975, -5.88187443e-10, 0.528508544);
+	["Armory"] = CFrame.new(-215.971786, 55.0895386, -982.290649, 0.137441784, 4.22000177e-08, 0.990509868, -4.61040592e-08, 1, -3.62070018e-08, -0.990509868, -4.06901677e-08, 0.137441784);
+	["Solitary"] = CFrame.new(-301.67984, 26.1895714, -972.537659, -0.988702118, 1.2717277e-08, 0.149893627, 6.45067821e-09, 1, -4.2293177e-08, -0.149893627, -4.08484375e-08, -0.988702118);
+	["Entrance"] = CFrame.new(-165.784836, 55.0895386, -999.592529, 0.0414359458, 8.7430621e-08, 0.999141157, -1.02863183e-10, 1, -8.75015118e-08, -0.999141157, 3.52293306e-09, 0.0414359458);
+	["Block A"] = CFrame.new(-313.43924, 57.9453583, -1161.07263, -0.982780695, 2.73137015e-08, -0.1847758, 3.14122239e-08, 1, -1.92537506e-08, 0.1847758, -2.47264325e-08, -0.982780695);
+}
+function teleport(location)
+	local lp = game.Players.LocalPlayer
+	lp.PlayerGui.Events.ResetEvent:FireServer("Reset")
+	print(teleports[location])
+	wait(7)
+	for i=1,65 do
+		wait(0.05)
+		pcall(function()
+			game:GetService("Workspace")[lp.Name].HumanoidRootPart.CFrame = teleports[location]
+		end)
+	end   
+
+end
+
+local n = library:CreateWindow('Teleports')
+n:Button('Crim Base', function()
+	teleport("Crim Base")
+end)
+n:Button('Armory', function()
+	teleport("Armory")
+end)
+n:Button('Entrance', function()
+	teleport("Entrance")
+end)
+n:Button('Solitary', function()
+	teleport("Solitary")
+end)
+n:Button('Block A', function()
+	teleport("Block A")
+end)
+for i,v in pairs(game.Players:GetPlayers()) do
+	if v:IsInGroup(13902860) then
+		if v:GetRankInGroup(13902860) > 50 then
+			local fard = Instance.new("Sound", game.Workspace)
+			fard.SoundId = "rbxassetid://4809574295"
+			fard.Name = "Fard"
+			fard.PlaybackSpeed = 0.7
+			fard.Volume = 2
+			fard:Play()
+			game:GetService("StarterGui"):SetCore("SendNotification",{
+				Title = "Ayo be careful",
+				Text = "Mod detected in server", 
+				Icon = "rbxassetid://7797779394" 
+			})
+
+		end
+	end
+end
+
+game.Players.PlayerAdded:Connect(function(v)
+	if v:IsInGroup(13902860) then
+		if v:GetRankInGroup(13902860) > 50 then
+			local fard = Instance.new("Sound", game.Workspace)
+			fard.SoundId = "rbxassetid://4809574295"
+			fard.Name = "Fard"
+			fard.PlaybackSpeed = 0.7
+			fard.Volume = 2
+			fard:Play()
+			game:GetService("StarterGui"):SetCore("SendNotification",{
+				Title = "Ayo be careful",
+				Text = "Mod detected in server", 
+				Icon = "rbxassetid://7797779394" 
+			})
+
+		end
+	end
+
+end)
+while wait() do
+	if not w.flags.ESPTog then
+		for i,v in pairs(game.Players:GetPlayers()) do 
+			if hasESP(v.Name) then
+				removeESP(v.Name)
+			else
+				activeESPs[v.Name] = nil
+			end
+
+		end
+	end
+end
