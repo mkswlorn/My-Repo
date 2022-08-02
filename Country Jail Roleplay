@@ -38,35 +38,44 @@ end
 local Mouse = lp:GetMouse()
 local dropped = {}
 local toolz = {"Keycard", "Glock 19", "Glock 17", "P226", "USP Tactical", "Beretta 92FS", "MP5", "M4A1", "G36C", "Uzi", "R870", "Shiv", "Makarov", "MP7", "UMP 40"}
-game.Workspace.ChildAdded:Connect(function(child)
-    pcall(function()
-	if teamCheck(lp) == false or not (hasTool(child.Name) and table.find(toolz, child.Name)) then
-		table.insert(dropped, child)
+local function teamCheck(player)
+	if player.Team.Name ~= "Department of Corrections" and player.Team.Name ~= "Criminal" then
+		return true
 	end
-	end)
+end
+game.Workspace.ChildAdded:Connect(function(child)
+	if  table.find(toolz, child.Name) then
+		if teamCheck(lp) == false then
+			table.insert(dropped, child)
+		else 
+			if not hasTool(child.Name) then
+				table.insert(dropped, child)
+			end
+		end
+	end
 end)
 local ap = false;
 w:Button('AC Bypass', function()
-    if ap == false then
-        ap = true
-     
-	game:GetService("StarterGui"):SetCore("SendNotification",{
-				Title = "Bypass Success",
-				Text = "", 
-				Icon = "rbxassetid://7752701233" 
-			})
-	local mt = getrawmetatable(game);
-	local old = mt.__namecall
-	setreadonly(mt,false)
-	mt.__namecall = newcclosure(function(remote,...)
-		args = {...}
-		method = tostring(getnamecallmethod())
-		if method == "FireServer" and tostring(remote) == "Exploits" then 
-			return wait(9e9)
-		end
-		return old(remote,...)
-	end)
-	setreadonly(mt,true)
+	if ap == false then
+		ap = true
+
+		game:GetService("StarterGui"):SetCore("SendNotification",{
+			Title = "Bypass Success",
+			Text = "", 
+			Icon = "rbxassetid://7752701233" 
+		})
+		local mt = getrawmetatable(game);
+		local old = mt.__namecall
+		setreadonly(mt,false)
+		mt.__namecall = newcclosure(function(remote,...)
+			args = {...}
+			method = tostring(getnamecallmethod())
+			if method == "FireServer" and tostring(remote) == "Exploits" then 
+				return wait(9e9)
+			end
+			return old(remote,...)
+		end)
+		setreadonly(mt,true)
 	end
 end)
 w:Button('Auto XP', function()
@@ -125,18 +134,18 @@ w:Button('Instant Arrest', function()
 		end
 	end)
 	spawn(function()
-	    while wait(0.05) do
-	        for i,v in pairs(game.Players:GetPlayers()) do 
-		if lp.Character and v.Character and v.Team.Name == "Criminal" and v.Character:FindFirstChild("Humanoid") and lp:DistanceFromCharacter(v.Character.Head.Position) < 5 then
-		    pcall(function()
-		    	local cr = lp.Character.Cuffs.MainEvent
-					cr:FireServer("Cuff", v.Character.Humanoid)
-		    
-		    end)
+		while wait(0.05) do
+			for i,v in pairs(game.Players:GetPlayers()) do 
+				if lp.Character and v.Character and v.Team.Name == "Criminal" and v.Character:FindFirstChild("Humanoid") and lp:DistanceFromCharacter(v.Character.Head.Position) < 5 then
+					pcall(function()
+						local cr = lp.Character.Cuffs.MainEvent
+						cr:FireServer("Cuff", v.Character.Humanoid)
+
+					end)
+				end
+			end
 		end
-		end
-	    end
-		    end)
+	end)
 end)
 
 w:Toggle('Hide Name', {flag = "hidename"}, function()
@@ -212,11 +221,6 @@ local function hasESP(name)
 
 			end
 		end
-	end
-end
-local function teamCheck(player)
-	if player.Team.Name ~= "Department of Corrections" and player.Team.Name ~= "Criminal" then
-		return true
 	end
 end
 local function getTools(player)
@@ -336,9 +340,9 @@ end)
 for i,v in pairs(game.Players:GetPlayers()) do
 	if v:IsInGroup(13902860) then
 		if v:GetRankInGroup(13902860) > 50 then
-		       local fard = Instance.new("Sound", game.Workspace)
-        	fard.SoundId = "rbxassetid://4809574295"
-        	fard.Name = "Fard"
+			local fard = Instance.new("Sound", game.Workspace)
+			fard.SoundId = "rbxassetid://4809574295"
+			fard.Name = "Fard"
 			fard.PlaybackSpeed = 0.7
 			fard.Volume = 2
 			fard:Play()
@@ -355,10 +359,10 @@ end
 game.Players.PlayerAdded:Connect(function(v)
 	if v:IsInGroup(13902860) then
 		if v:GetRankInGroup(13902860) > 50 then
-		     local fard = Instance.new("Sound", game.Workspace)
-        	fard.SoundId = "rbxassetid://4809574295"
-        	fard.Name = "Fard"
-    			fard.PlaybackSpeed = 0.7
+			local fard = Instance.new("Sound", game.Workspace)
+			fard.SoundId = "rbxassetid://4809574295"
+			fard.Name = "Fard"
+			fard.PlaybackSpeed = 0.7
 			fard.Volume = 2
 			fard:Play()
 			game:GetService("StarterGui"):SetCore("SendNotification",{
