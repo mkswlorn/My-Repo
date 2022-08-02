@@ -39,9 +39,11 @@ local Mouse = lp:GetMouse()
 local dropped = {}
 local toolz = {"Keycard", "Glock 19", "Glock 17", "P226", "USP Tactical", "Beretta 92FS", "MP5", "M4A1", "G36C", "Uzi", "R870", "Shiv", "Makarov", "MP7", "UMP 40"}
 game.Workspace.ChildAdded:Connect(function(child)
-	if not hasTool(child.Name) and table.find(toolz, child.Name) then
+    pcall(function()
+	if teamCheck(lp) == false or not (hasTool(child.Name) and table.find(toolz, child.Name)) then
 		table.insert(dropped, child)
 	end
+	end)
 end)
 local ap = false;
 w:Button('AC Bypass', function()
@@ -122,6 +124,19 @@ w:Button('Instant Arrest', function()
 			end
 		end
 	end)
+	spawn(function()
+	    while wait(0.05) do
+	        for i,v in pairs(game.Players:GetPlayers()) do 
+		if lp.Character and v.Character and v.Team.Name == "Criminal" and v.Character:FindFirstChild("Humanoid") and lp:DistanceFromCharacter(v.Character.Head.Position) < 5 then
+		    pcall(function()
+		    	local cr = lp.Character.Cuffs.MainEvent
+					cr:FireServer("Cuff", v.Character.Humanoid)
+		    
+		    end)
+		end
+		end
+	    end
+		    end)
 end)
 
 w:Toggle('Hide Name', {flag = "hidename"}, function()
