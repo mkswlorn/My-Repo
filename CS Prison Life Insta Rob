@@ -2,7 +2,6 @@ local library = loadstring(game:HttpGet(('https://raw.githubusercontent.com/bloo
 library.options.underlinecolor = Color3.fromRGB(106, 13, 173)
 local w = library:CreateWindow('CS Prison Life')
 local lp = game.Players.LocalPlayer
-
 w:Toggle('Insta Rob', {flag = "instarob"}, function()
 	for i,v in pairs(game.Lighting.CityFolder.JewerlyStore:GetDescendants()) do
 		if v.Name == "TouchInterest" then
