@@ -207,12 +207,16 @@ w:Button('Instant Arrest', function()
 	end)
 	spawn(function()
 		while wait(0.05) do
-		   if lp.Character and lp.Character:FindFirstChild("Cuffs") then
+		   if lp.Character and (lp.Character:FindFirstChild("Cuffs") or lp.Backpack:FindFirstChild("Cuffs")) then
 			for i,v in pairs(game.Players:GetPlayers()) do 
-				if lp.Character and v.Character and v.Team.Name == "Criminal" and v.Character:FindFirstChild("Humanoid") and lp:DistanceFromCharacter(v.Character.Head.Position) < 5 then
+				if v.Character and v.Team.Name == "Criminal" and v.Character:FindFirstChild("Humanoid") and lp:DistanceFromCharacter(v.Character.Head.Position) < 5 then
 					pcall(function()
-						local cr = lp.Character.Cuffs.MainEvent
-						cr:FireServer("Cuff", v.Character.Humanoid)
+					    if lp.Character:FindFirstChild("Cuffs") then
+					        lp.Character.Cuffs.MainEvent:FireServer("Cuff", v.Character.Humanoid)
+					    end
+				        if lp.Character.Backpack:FindFirstChild("Cuffs") then
+				            lp.Backpack.Cuffs.MainEvent:FireServer("Cuff", v.Character.Humanoid)
+				        end
 					end)
 				end
 				end
