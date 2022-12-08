@@ -115,11 +115,13 @@ Button2.MouseButton1Click:Connect(function()
 end)
 spawn(function()
     while wait(0.2) do 
+        pcall(function()
         for i,v in pairs(game.Players.LocalPlayer.Backpack:GetChildren()) do 
-    if Button2On and v:IsA("Tool") and v.Name == "SuperFlyGoldBoombox" or v.Name == "TrololoCapeOfInvisibility" or v.Name == "Acceleration Coil" or v.Name == "GravityCoil" then
+    if Button2On == true and v:IsA("Tool") and (v.Name == "SuperFlyGoldBoombox" or v.Name == "TrololoCapeOfInvisibility" or v.Name == "Acceleration Coil" or v.Name == "GravityCoil") then
     v:Destroy()
             end
         end
+        end)
     end
     end)
 
