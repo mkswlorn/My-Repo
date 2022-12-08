@@ -1,0 +1,36 @@
+-- Hold T and click on a doomspire to teleport below it
+
+game:GetService("Workspace").Baseplate:Destroy()
+
+local Player = game.Players.LocalPlayer
+local Mouse = Player:GetMouse()
+local UserInputService = game:GetService('UserInputService')
+
+local HoldingControl = false
+
+Mouse.Button1Down:connect(function()
+if HoldingControl and Mouse.Target:IsA("Part") and Mouse.Target:IsDescendantOf(game.Workspace.Doomspires)  then
+for i,v in pairs(game.Workspace.Doomspires:GetDescendants()) do 
+    if v:IsA("BrickColorValue") and v.Value == Mouse.Target.BrickColor then
+        Player.Character:MoveTo(v.Parent.Floor1.Stairs:FindFirstChild("StairBrick").Position)
+        
+        end
+    end
+end
+end)
+
+UserInputService.InputBegan:connect(function(Input, Processed)
+if Input.UserInputType == Enum.UserInputType.Keyboard then
+if Input.KeyCode == Enum.KeyCode.T then
+HoldingControl = true
+end
+end
+end)
+
+UserInputService.InputEnded:connect(function(Input, Processed)
+if Input.UserInputType == Enum.UserInputType.Keyboard then
+if Input.KeyCode == Enum.KeyCode.T then
+HoldingControl = false
+end
+end
+end)
