@@ -63,24 +63,24 @@ Button1.TextColor3 = Color3.new(0, 0, 0)
 Button1.TextSize = 14
 local Button1On
 Button1.MouseButton1Click:Connect(function()
-    if not Button1On then
-        Button1.BackgroundColor3 = Color3.new(0, 1, 0)
-        for i,v in pairs(workspace:GetChildren()) do 
-            if v.Name == "LuckyBlock" then
-                firetouchinterest(v.Block, game.Players.LocalPlayer.Character.Head, 0)
-                end
-            end
-        else
-            Button1.BackgroundColor3 = Color3.new(1, 0, 0)
-    end
-        Button1On = not Button1On
-    end)
+	if not Button1On then
+		Button1.BackgroundColor3 = Color3.new(0, 1, 0)
+		for i,v in pairs(workspace:GetChildren()) do 
+			if v.Name == "LuckyBlock" then
+				firetouchinterest(v.Block, game.Players.LocalPlayer.Character.Head, 0)
+			end
+		end
+	else
+		Button1.BackgroundColor3 = Color3.new(1, 0, 0)
+	end
+	Button1On = not Button1On
+end)
 game.Workspace.ChildAdded:Connect(function(a)
-    if a.Name == "LuckyBlock" and Button1On == true then
-        wait(0.05)
-        firetouchinterest(a.Block, game.Players.LocalPlayer.Character.Head, 0)
-        end
-    end)
+	if a.Name == "LuckyBlock" and Button1On == true then
+		wait(0.05)
+		firetouchinterest(a.Block, game.Players.LocalPlayer.Character.Head, 0)
+	end
+end)
 Text2.Name = "Text2"
 Text2.Parent = Frame
 Text2.BackgroundColor3 = Color3.new(1, 1, 1)
@@ -106,24 +106,24 @@ Button2.TextColor3 = Color3.new(0, 0, 0)
 Button2.TextSize = 14
 local Button2On
 Button2.MouseButton1Click:Connect(function()
-    if not Button2On then
-        Button2.BackgroundColor3 = Color3.new(0, 1, 0)
-        else
-            Button2.BackgroundColor3 = Color3.new(1, 0, 0)
-    end
-        Button2On = not Button2On
+	if not Button2On then
+		Button2.BackgroundColor3 = Color3.new(0, 1, 0)
+	else
+		Button2.BackgroundColor3 = Color3.new(1, 0, 0)
+	end
+	Button2On = not Button2On
 end)
 spawn(function()
-    while wait(0.2) do 
-        pcall(function()
-        for i,v in pairs(game.Players.LocalPlayer.Backpack:GetChildren()) do 
-    if Button2On == true and v:IsA("Tool") and (v.Name == "SuperFlyGoldBoombox" or v.Name == "TrololoCapeOfInvisibility" or v.Name == "Acceleration Coil" or v.Name == "GravityCoil") then
-    v:Destroy()
-            end
-        end
-        end)
-    end
-    end)
+	while wait(0.2) do 
+		pcall(function()
+			for i,v in pairs(game.Players.LocalPlayer.Backpack:GetChildren()) do 
+				if Button2On == true and v:IsA("Tool") and (v.Name == "SuperFlyGoldBoombox" or v.Name == "TrololoCapeOfInvisibility" or v.Name == "Acceleration Coil" or v.Name == "GravityCoil") then
+					v:Destroy()
+				end
+			end
+		end)
+	end
+end)
 
 Text3.Name = "Text3"
 Text3.Parent = Frame
@@ -150,24 +150,24 @@ Button3.TextColor3 = Color3.new(0, 0, 0)
 Button3.TextSize = 14
 local Button3On
 Button3.MouseButton1Click:Connect(function()
-    if not Button3On then
-        Button3.BackgroundColor3 = Color3.new(0, 1, 0)
-        local Part = Instance.new("Part", workspace)
-        Part.Position = Vector3.new(-11.521, 0.448511, -41.8993)
-        Part.Size = Vector3.new(499, 2, 715)
-        Part.Anchored = true
-        Part.CanCollide = true
-        Part.Transparency = 1
-        Part.Orientation = Vector3.new(0, 0, 0)
-        Part.Name = "Platform"
-        else
-            Button3.BackgroundColor3 = Color3.new(1, 0, 0)
-            if workspace:FindFirstChild("Platform") then
-                workspace.Platform:Destroy()
-                end
-    end
-        Button3On = not Button3On
-    end)
+	if not Button3On then
+		Button3.BackgroundColor3 = Color3.new(0, 1, 0)
+		local Part = Instance.new("Part", workspace)
+		Part.Position = Vector3.new(-11.521, 0.448511, -41.8993)
+		Part.Size = Vector3.new(499, 2, 715)
+		Part.Anchored = true
+		Part.CanCollide = true
+		Part.Transparency = 1
+		Part.Orientation = Vector3.new(0, 0, 0)
+		Part.Name = "Platform"
+	else
+		Button3.BackgroundColor3 = Color3.new(1, 0, 0)
+		if workspace:FindFirstChild("Platform") then
+			workspace.Platform:Destroy()
+		end
+	end
+	Button3On = not Button3On
+end)
 
 Hint.Name = "Hint"
 Hint.Parent = Frame
@@ -184,7 +184,7 @@ Hint.TextSize = 14
 Hint.TextWrapped = true
 
 if workspace:FindFirstChild("Baseplate") and workspace.Baseplate:FindFirstChild("Kill") then
-game:GetService("Workspace").Baseplate.Kill:Destroy()
+	game:GetService("Workspace").Baseplate.Kill:Destroy()
 end
 
 local Player = game.Players.LocalPlayer
@@ -194,27 +194,27 @@ local UserInputService = game:GetService('UserInputService')
 local HoldingControl = false
 
 Mouse.Button1Down:connect(function()
-if HoldingControl and Mouse.Target:IsA("Part") and Mouse.Target:IsDescendantOf(game.Workspace.Doomspires)  then
-for i,v in pairs(game.Workspace.Doomspires:GetDescendants()) do 
-    if v:IsA("BrickColorValue") and v.Value == Mouse.Target.BrickColor and v.Parent:FindFirstChild("Floor1") then
-        Player.Character:MoveTo(v.Parent.Floor1.Stairs:FindFirstChild("StairBrick").Position)
-        end
-    end
-end
+	if HoldingControl and Mouse.Target:IsA("Part") and Mouse.Target:IsDescendantOf(game.Workspace.Doomspires)  then
+		for i,v in pairs(game.Workspace.Doomspires:GetDescendants()) do 
+			if v:IsA("BrickColorValue") and v.Value == Mouse.Target.BrickColor and v.Parent:FindFirstChild("Floor1") then
+				Player.Character:MoveTo(v.Parent.Floor1.Stairs:FindFirstChild("StairBrick").Position)
+			end
+		end
+	end
 end)
 
 UserInputService.InputBegan:connect(function(Input, Processed)
-if Input.UserInputType == Enum.UserInputType.Keyboard then
-if Input.KeyCode == Enum.KeyCode.T then
-HoldingControl = true
-end
-end
+	if Input.UserInputType == Enum.UserInputType.Keyboard then
+		if Input.KeyCode == Enum.KeyCode.T then
+			HoldingControl = true
+		end
+	end
 end)
 
 UserInputService.InputEnded:connect(function(Input, Processed)
-if Input.UserInputType == Enum.UserInputType.Keyboard then
-if Input.KeyCode == Enum.KeyCode.T then
-HoldingControl = false
-end
-end
+	if Input.UserInputType == Enum.UserInputType.Keyboard then
+		if Input.KeyCode == Enum.KeyCode.T then
+			HoldingControl = false
+		end
+	end
 end)
