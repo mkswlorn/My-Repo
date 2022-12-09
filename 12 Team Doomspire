@@ -183,8 +183,8 @@ Hint.TextScaled = true
 Hint.TextSize = 14
 Hint.TextWrapped = true
 
-if workspace:FindFirstChild("Baseplate") then
-game:GetService("Workspace").Baseplate:Destroy()
+if workspace:FindFirstChild("Baseplate") and workspace.Baseplate:FindFirstChild("Kill") then
+game:GetService("Workspace").Baseplate.Kill:Destroy()
 end
 
 local Player = game.Players.LocalPlayer
