@@ -154,7 +154,7 @@ Button3.MouseButton1Click:Connect(function()
         Button3.BackgroundColor3 = Color3.new(0, 1, 0)
         local Part = Instance.new("Part", workspace)
         Part.Position = Vector3.new(-11.521, 0.448511, -41.8993)
-        Part.Size = Vector3.new(499, 1, 715)
+        Part.Size = Vector3.new(499, 2, 715)
         Part.Anchored = true
         Part.CanCollide = true
         Part.Transparency = 1
