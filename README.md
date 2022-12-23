@@ -10,6 +10,10 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/mkswlorn/Eclipsis/mai
 ```lua
 loadstring(game:HttpGet("https://raw.githubusercontent.com/mkswlorn/My-Repo/main/County%20Jail%20Roleplay"))();
 ```
+## [Vocab Havoc](https://www.roblox.com/games/8878258461/VOCAB-HAVOC)
+```lua
+loadstring(game:HttpGet("https://raw.githubusercontent.com/mkswlorn/My-Repo/main/VOCAB%20HAVOC"))();
+```
 
 ## [12 Team Doomspire](https://www.roblox.com/games/5081956985/12-Team-Doomspire)
 
