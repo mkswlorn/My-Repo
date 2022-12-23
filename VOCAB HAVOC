@@ -1,7 +1,9 @@
-getgenv().AutoGuess = false
+getgenv().AutoGuess = true
 
-getgenv().AutoPlay = false
+getgenv().AutoPlay = true
 getgenv().Mode = "Practice" -- Battle, Frenzy, Expert, Master
+getgenv().Follow = "" -- if you want to follow someone (used in combination with Users below)
+getgenv().Users = {""} -- if you want to run a bot lobby for more xp, then add your alts usernames seperated by a comma here
 
 local function replace(str, pos, char)
 	if #str:sub(pos - #str) == 5 then 
@@ -85,16 +87,39 @@ end)
 
 
 if getgenv().AutoGuess == true then
-	for i,v in pairs(workspace.GameSlots:GetChildren()) do 
-		v.ChildAdded:Connect(function(child)
-			if child.Name == "Panel_"..tostring(game.Players.LocalPlayer.Name) then
-				wait(2)
-				game.ReplicatedStorage.Remotes.SubmitGuess:FireServer("PLATE", 1)
-			end
-		end)
+	if getgenv().Follow == "" then
+		for i,v in pairs(workspace.GameSlots:GetChildren()) do 
+			v.ChildAdded:Connect(function(child)
+				if child.Name == "Panel_"..tostring(game.Players.LocalPlayer.Name) then
+					wait(2)
+					game.ReplicatedStorage.Remotes.SubmitGuess:FireServer("PLATE", 1)
+				end
+			end)
+		end
+	end
+	if getgenv().Follow ~= "" and getgenv().Follow ~= game.Players.LocalPlayer.Name and table.find(getgenv().Users, game.Players.LocalPlayer.Name) then
+		print("You are the follower")
+		for i,v in pairs(workspace.GameSlots:GetChildren()) do 
+			v.ChildAdded:Connect(function(child)
+				if child.Name == "Panel_"..getgenv().Follow then
+					wait(2)
+					game.ReplicatedStorage.Remotes.SubmitGuess:FireServer("PLATE", 1)
+				end
+			end)
+		end
+	end
+	if getgenv().Follow == game.Players.LocalPlayer.Name then
+		print("You are the leader")
+		for i,v in pairs(workspace.GameSlots:GetChildren()) do 
+			v.ChildAdded:Connect(function(child)
+				if child.Name == "Panel_"..game.Players.LocalPlayer.Name then
+					wait(2)
+					game.ReplicatedStorage.Remotes.SubmitGuess:FireServer("PLATE", 1)
+				end
+			end)
+		end
 	end
 end
-
 
 
 game.ReplicatedStorage.Remotes.GameOver.OnClientEvent:Connect(function()
@@ -105,12 +130,7 @@ game.ReplicatedStorage.Remotes.GameOver.OnClientEvent:Connect(function()
 	print("returning")
 	wait(3)
 	if getgenv().AutoPlay == true then
-		for i,v in pairs(workspace.GameSlots:GetChildren()) do 
-			if not v:FindFirstChildWhichIsA("Model") then
-				game:GetService("ReplicatedStorage").Remotes.GoToSlot:FireServer(v)
-				break
-			end
-		end
+		local slot;
 
 		local args = {
 			[1] = {
@@ -130,13 +150,61 @@ game.ReplicatedStorage.Remotes.GameOver.OnClientEvent:Connect(function()
 			[2] = true,
 			[3] = getgenv().Mode
 		}
+		if getgenv().Follow ~= "" and getgenv().Follow ~= game.Players.LocalPlayer.Name and table.find(getgenv().Users, game.Players.LocalPlayer.Name) then
+			for i,v in pairs(workspace.GameSlots:GetChildren()) do 
+				v.UI.Players.ChildAdded:Connect(function(child)
+					if child.Name == getgenv().Follow then
+						wait(2)
+						game:GetService("ReplicatedStorage").Remotes.GoToSlot:FireServer(v)
+					end
+				end)
+			end
+		end
+		if getgenv().Follow == game.Players.LocalPlayer.Name then
+			for i,v in pairs(workspace.GameSlots:GetChildren()) do 
+				if not v:FindFirstChildWhichIsA("Model") then
+					slot = v
+					game:GetService("ReplicatedStorage").Remotes.GoToSlot:FireServer(v)
+					break
+				end
+			end
 
-		game:GetService("ReplicatedStorage").Remotes.ChooseMode:FireServer(unpack(args))
-		wait(1)
-		game:GetService("ReplicatedStorage").Remotes.StartGame:FireServer(unpack(args))
+			game:GetService("ReplicatedStorage").Remotes.ChooseMode:FireServer(unpack(args))
+			wait(1)
+			local names = {}
+			slot.UI.Players.ChildAdded:Connect(function(child)
+				if table.find(getgenv().Users, child.Name) then 
+					print(child.Name)
+					table.insert(names, child.Name)
+				end
+			end)
+			slot.UI.Players.ChildRemoved:Connect(function(child)
+				if table.find(names, child.Name) then 
+					table.remove(names, names[child.Name])
+				end
+			end)
+			print(table.unpack(names))
+			print(table.unpack(getgenv().Users))
+			print(table.unpack(names) == table.unpack(getgenv().Users))
+			repeat wait(1) until table.unpack(names) == table.unpack(getgenv().Users)
 
-
-
+			game:GetService("ReplicatedStorage").Remotes.StartGame:FireServer(unpack(args))
+		else
+			return
+		end
+		if getgenv().Follow == "" then
+			print("You are not following anyone")
+			for i,v in pairs(workspace.GameSlots:GetChildren()) do 
+				if not v:FindFirstChildWhichIsA("Model") then
+					slot = v
+					game:GetService("ReplicatedStorage").Remotes.GoToSlot:FireServer(v)
+					break
+				end
+			end
+			game:GetService("ReplicatedStorage").Remotes.ChooseMode:FireServer(unpack(args))
+			wait(1)
+			game:GetService("ReplicatedStorage").Remotes.StartGame:FireServer(unpack(args))
+		end
 	end
 end)
 
