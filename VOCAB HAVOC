@@ -1,3 +1,4 @@
+getgenv().AutoGuess = false
 
 local function replace(str, pos, char)
 	if #str:sub(pos - #str) == 5 then 
@@ -11,14 +12,18 @@ local word;
 local absent1 = "";
 local correct = "_____";
 local usedwords = {};
-local index;
+local index = 0
 
 game.ReplicatedStorage.Remotes.SubmitGuess.OnClientEvent:Connect(function(p25, p26, p27, p28, p29)
 	if p29 ~= nil then
-		print("returning")
+		index = index + 1
+		print("WORD #".. tostring(index)..": "..word)
 		correct = "_____";
 		absent1 = "";
 		usedwords = {};
+		if getgenv().AutoGuess == true then
+			game.ReplicatedStorage.Remotes.SubmitGuess:FireServer("PLATE", 1)
+		end
 		return
 	end
 	if p25 == true and word then
@@ -28,14 +33,10 @@ game.ReplicatedStorage.Remotes.SubmitGuess.OnClientEvent:Connect(function(p25, p
 		local letters = string.split(word, "")
 		for i,v in pairs(letters) do 
 			if p26[i] == "present" then
-				--if not table.find(string.split(present, ""), v) then
 				present =  replace(present, i, v)  
-				--end
 			end
 			if p26[i] == "correct" then
-				--if not table.find(string.split(correct, ""), v) then
 				correct = replace(correct, i, v)
-				--end
 			end
 		end
 		for i,v in pairs(letters) do 
@@ -53,7 +54,7 @@ game.ReplicatedStorage.Remotes.SubmitGuess.OnClientEvent:Connect(function(p25, p
 			present;
 			correct;
 		}
-		print(table.unpack(taa))
+		--print(table.unpack(taa))
 
 		local a = game:HttpGet("https://www.thewordfinder.com/wordle-solver/solve.php?w="..correct.."&b="..absent1.."&s=1&v="..present.."&")
 
@@ -64,11 +65,32 @@ game.ReplicatedStorage.Remotes.SubmitGuess.OnClientEvent:Connect(function(p25, p
 				table.insert(results, v:upper())
 			end
 		end
-		print(#results, table.unpack(results))
 
-		print("-------------------------------------")
+		if not table.find(string.split(correct, ""), "_") then
+			print("WORD #".. tostring(index + 1)..": "..word)
+		end
+
+		if getgenv().AutoGuess == true then
+			game.ReplicatedStorage.Remotes.SubmitGuess:FireServer(results[1], p28 + 1)
+		else
+			print(#results, table.unpack(results))
+
+			print("-------------------------------------")
+		end
 	end
 end)
+
+
+if getgenv().AutoGuess == true then
+	for i,v in pairs(workspace.GameSlots:GetChildren()) do 
+		v.ChildAdded:Connect(function(child)
+			if child.Name == "Panel_"..tostring(game.Players.LocalPlayer.Name) then
+				wait(2)
+				game.ReplicatedStorage.Remotes.SubmitGuess:FireServer("PLATE", 1)
+			end
+		end)
+	end
+end
 
 
 
@@ -76,9 +98,9 @@ game.ReplicatedStorage.Remotes.GameOver.OnClientEvent:Connect(function()
 	absent1 = "";
 	correct = "_____";
 	usedwords = {};
+	index = 0;
 	print("returning")
 end)
-
 
 local mt = getrawmetatable(game)
 local backupnamecall = mt.__namecall
