@@ -1,5 +1,8 @@
 getgenv().AutoGuess = false
 
+getgenv().AutoPlay = false
+getgenv().Mode = "Practice" -- Battle, Frenzy, Expert, Master
+
 local function replace(str, pos, char)
 	if #str:sub(pos - #str) == 5 then 
 		return str:sub(1, pos - 1) .. char
@@ -73,7 +76,7 @@ game.ReplicatedStorage.Remotes.SubmitGuess.OnClientEvent:Connect(function(p25, p
 		if getgenv().AutoGuess == true then
 			game.ReplicatedStorage.Remotes.SubmitGuess:FireServer(results[1], p28 + 1)
 		else
-			print(#results, table.unpack(results))
+			print(table.unpack(results))
 
 			print("-------------------------------------")
 		end
@@ -100,6 +103,41 @@ game.ReplicatedStorage.Remotes.GameOver.OnClientEvent:Connect(function()
 	usedwords = {};
 	index = 0;
 	print("returning")
+	wait(3)
+	if getgenv().AutoPlay == true then
+		for i,v in pairs(workspace.GameSlots:GetChildren()) do 
+			if not v:FindFirstChildWhichIsA("Model") then
+				game:GetService("ReplicatedStorage").Remotes.GoToSlot:FireServer(v)
+				break
+			end
+		end
+
+		local args = {
+			[1] = {
+				["Privacy"] = 0,
+				["Words"] = 1,
+				["TimerGame"] = 120,
+				["Color"] = nil --[[Color3]],
+				["Anchored"] = true,
+				["Lockdown"] = true,
+				["Letters"] = 5,
+				["Guesses"] = 0,
+				["Pre_Correct"] = 0,
+				["Pre_Present"] = 0,
+				["Players"] = 100,
+				["TimerRows"] = 60
+			},
+			[2] = true,
+			[3] = getgenv().Mode
+		}
+
+		game:GetService("ReplicatedStorage").Remotes.ChooseMode:FireServer(unpack(args))
+		wait(1)
+		game:GetService("ReplicatedStorage").Remotes.StartGame:FireServer(unpack(args))
+
+
+
+	end
 end)
 
 local mt = getrawmetatable(game)
