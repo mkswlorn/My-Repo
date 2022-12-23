@@ -2,8 +2,8 @@ getgenv().AutoGuess = true
 
 getgenv().AutoPlay = true
 getgenv().Mode = "Practice" -- Battle, Frenzy, Expert, Master
-getgenv().Follow = "" -- if you want to follow someone (in combination with Users below)
-getgenv().Users = {"IlIlIllllIIIlIlIllII"} -- if you want to run a bot lobby for more xp, then add your alts usernames seperated by a comma here
+getgenv().Follow = "" -- if you want to follow someone (in combination with Users)
+getgenv().Users = {""} -- if you want to run a bot lobby for more xp, then add your alts usernames seperated by a comma here, and add this script to autoexec folder
 
 local function replace(str, pos, char)
 	if #str:sub(pos - #str) == 5 then 
@@ -18,7 +18,6 @@ local absent1 = "";
 local correct = "_____";
 local usedwords = {};
 local index = 0
-
 game.ReplicatedStorage.Remotes.SubmitGuess.OnClientEvent:Connect(function(p25, p26, p27, p28, p29)
 	if p29 ~= nil then
 		index = index + 1
@@ -60,9 +59,7 @@ game.ReplicatedStorage.Remotes.SubmitGuess.OnClientEvent:Connect(function(p25, p
 			correct;
 		}
 		--print(table.unpack(taa))
-
 		local a = game:HttpGet("https://www.thewordfinder.com/wordle-solver/solve.php?w="..correct.."&b="..absent1.."&s=1&v="..present.."&")
-
 		local b = game.HttpService:JSONDecode(a)
 		local results = {}
 		for i,v in pairs(b["results"]) do 
@@ -70,11 +67,9 @@ game.ReplicatedStorage.Remotes.SubmitGuess.OnClientEvent:Connect(function(p25, p
 				table.insert(results, v:upper())
 			end
 		end
-
 		if not table.find(string.split(correct, ""), "_") and word ~= nil then
 			print("WORD #".. tostring(index + 1)..": "..word)
 		end
-
 		if getgenv().AutoGuess == true then
 			game.ReplicatedStorage.Remotes.SubmitGuess:FireServer(results[1], p28 + 1)
 		else
@@ -84,8 +79,6 @@ game.ReplicatedStorage.Remotes.SubmitGuess.OnClientEvent:Connect(function(p25, p
 		end
 	end
 end)
-
-
 if getgenv().AutoGuess == true then
 	if getgenv().Follow == "" then
 		for i,v in pairs(workspace.GameSlots:GetChildren()) do 
@@ -98,7 +91,6 @@ if getgenv().AutoGuess == true then
 		end
 	end
 	if getgenv().Follow ~= "" and getgenv().Follow ~= game.Players.LocalPlayer.Name and table.find(getgenv().Users, game.Players.LocalPlayer.Name) then
-		print("You are the follower")
 		for i,v in pairs(workspace.GameSlots:GetChildren()) do 
 			v.ChildAdded:Connect(function(child)
 				if child.Name == "Panel_"..getgenv().Follow then
@@ -109,7 +101,6 @@ if getgenv().AutoGuess == true then
 		end
 	end
 	if getgenv().Follow ~= "" and getgenv().Follow == game.Players.LocalPlayer.Name then
-		print("You are the leader")
 		for i,v in pairs(workspace.GameSlots:GetChildren()) do 
 			v.ChildAdded:Connect(function(child)
 				if child.Name == "Panel_"..game.Players.LocalPlayer.Name then
@@ -120,8 +111,84 @@ if getgenv().AutoGuess == true then
 		end
 	end
 end
+local function getplayers()
+	local players = {}
+	for i,v in pairs(game.Players:GetChildren()) do 
+		if table.find(getgenv().Users, v.Name) then
+			table.insert(players, v.Name)
+		end
+	end
+	return table.unpack(players)
+end
+local function slotplayers(slot)
+	local names = {}
+	for i,v in pairs(slot.UI.Players:GetChildren()) do 
+		if v ~= nil and table.find(getgenv().Users, v.Name) then 
+			table.insert(names, v.Name)
+		end
+	end
+	return table.unpack(names)
+end
 
+local function play()
+	local slot;
+	local args = {
+		[1] = {
+			["Privacy"] = 0,
+			["Words"] = 1,
+			["TimerGame"] = 120,
+			["Color"] = nil --[[Color3]],
+			["Anchored"] = true,
+			["Lockdown"] = true,
+			["Letters"] = 5,
+			["Guesses"] = 0,
+			["Pre_Correct"] = 0,
+			["Pre_Present"] = 0,
+			["Players"] = 100,
+			["TimerRows"] = 60
+		},
+		[2] = true,
+		[3] = getgenv().Mode
+	}
+	if getgenv().Follow == "" then
+		for i,v in pairs(workspace.GameSlots:GetChildren()) do 
+			if not v:FindFirstChildWhichIsA("Model") then
+				slot = v
+				game:GetService("ReplicatedStorage").Remotes.GoToSlot:FireServer(v)
+				break
+			end
+		end
+		game:GetService("ReplicatedStorage").Remotes.ChooseMode:FireServer(unpack(args))
+		wait(1)
+		game:GetService("ReplicatedStorage").Remotes.StartGame:FireServer(unpack(args))
+	end
+	if getgenv().Follow ~= "" and getgenv().Follow ~= game.Players.LocalPlayer.Name and table.find(getgenv().Users, game.Players.LocalPlayer.Name) then
+		for i,v in pairs(workspace.GameSlots:GetChildren()) do 
+			v.UI.Players.ChildAdded:Connect(function(child)
+				if child.Name == getgenv().Follow then
+					wait(2)
+					game:GetService("ReplicatedStorage").Remotes.GoToSlot:FireServer(v)
+				end
+			end)
+		end
+	end
+	if getgenv().Follow ~= "" and getgenv().Follow == game.Players.LocalPlayer.Name then
+		repeat wait(1) until getplayers() == table.unpack(getgenv().Users)
+		for i,v in pairs(workspace.GameSlots:GetChildren()) do 
+			if not v:FindFirstChildWhichIsA("Model") then
+				slot = v
+				game:GetService("ReplicatedStorage").Remotes.GoToSlot:FireServer(v)
+				break
+			end
+		end
+		game:GetService("ReplicatedStorage").Remotes.ChooseMode:FireServer(unpack(args))
+		wait(1)
+		repeat wait(1) until slotplayers(slot) == table.unpack(getgenv().Users)
 
+		game:GetService("ReplicatedStorage").Remotes.StartGame:FireServer(unpack(args))
+	end
+end
+play()
 game.ReplicatedStorage.Remotes.GameOver.OnClientEvent:Connect(function()
 	absent1 = "";
 	correct = "_____";
@@ -130,106 +197,12 @@ game.ReplicatedStorage.Remotes.GameOver.OnClientEvent:Connect(function()
 	print("returning")
 	wait(3)
 	if getgenv().AutoPlay == true then
-		local slot;
-
-		local args = {
-			[1] = {
-				["Privacy"] = 0,
-				["Words"] = 1,
-				["TimerGame"] = 120,
-				["Color"] = nil --[[Color3]],
-				["Anchored"] = true,
-				["Lockdown"] = true,
-				["Letters"] = 5,
-				["Guesses"] = 0,
-				["Pre_Correct"] = 0,
-				["Pre_Present"] = 0,
-				["Players"] = 100,
-				["TimerRows"] = 60
-			},
-			[2] = true,
-			[3] = getgenv().Mode
-		}
-		if getgenv().Follow ~= "" and getgenv().Follow ~= game.Players.LocalPlayer.Name and table.find(getgenv().Users, game.Players.LocalPlayer.Name) then
-			for i,v in pairs(workspace.GameSlots:GetChildren()) do 
-				v.UI.Players.ChildAdded:Connect(function(child)
-					if child.Name == getgenv().Follow then
-						wait(2)
-						game:GetService("ReplicatedStorage").Remotes.GoToSlot:FireServer(v)
-					end
-				end)
-			end
-		end
-		if getgenv().Follow ~= "" and getgenv().Follow == game.Players.LocalPlayer.Name then
-			local players = {}
-			for i,v in pairs(game.Players:GetChildren()) do 
-				if table.find(getgenv().Users, v.Name) then
-					table.insert(players, v.Name)
-				end
-			end
-			game.Players.PlayerAdded:Connect(function(plr)
-				if not table.find(players, plr.Name) and table.find(getgenv().Users, plr.Name) then
-					table.insert(players, plr.Name)
-				end
-			end)
-			game.Players.PlayerRemoving:Connect(function(plr)
-				if table.find(players, plr.Name) and table.find(getgenv().Users, plr.Name) then
-					table.remove(players,players[plr.Name])
-				end
-			end)
-
-
-			repeat wait(1) until table.unpack(players) == table.unpack(getgenv().Users)
-			print("made it further")
-			for i,v in pairs(workspace.GameSlots:GetChildren()) do 
-				if not v:FindFirstChildWhichIsA("Model") then
-					slot = v
-					game:GetService("ReplicatedStorage").Remotes.GoToSlot:FireServer(v)
-					break
-				end
-			end
-
-			game:GetService("ReplicatedStorage").Remotes.ChooseMode:FireServer(unpack(args))
-			wait(1)
-			local names = {}
-			slot.UI.Players.ChildAdded:Connect(function(child)
-				if table.find(getgenv().Users, child.Name) then 
-					print(child.Name.. "Added")
-					table.insert(names, child.Name)
-				end
-			end)
-			slot.UI.Players.ChildRemoved:Connect(function(child)
-				if table.find(names, child.Name) then 
-					print(child.Name.. "Removed")
-					table.remove(names, names[child.Name])
-				end
-			end)
-			repeat wait(1) until table.unpack(names) == table.unpack(getgenv().Users)
-
-			game:GetService("ReplicatedStorage").Remotes.StartGame:FireServer(unpack(args))
-		else
-			return
-		end
-		if getgenv().Follow == "" then
-			print("You are not following anyone")
-			for i,v in pairs(workspace.GameSlots:GetChildren()) do 
-				if not v:FindFirstChildWhichIsA("Model") then
-					slot = v
-					game:GetService("ReplicatedStorage").Remotes.GoToSlot:FireServer(v)
-					break
-				end
-			end
-			game:GetService("ReplicatedStorage").Remotes.ChooseMode:FireServer(unpack(args))
-			wait(1)
-			game:GetService("ReplicatedStorage").Remotes.StartGame:FireServer(unpack(args))
-		end
+		play()
 	end
 end)
-
 local mt = getrawmetatable(game)
 local backupnamecall = mt.__namecall
 setreadonly(mt, false)
-
 mt.__namecall = newcclosure(function(Self, ...)
 	local args = {...}
 	local method = getnamecallmethod()
@@ -241,5 +214,4 @@ mt.__namecall = newcclosure(function(Self, ...)
 	end
 	return backupnamecall(Self, ...)
 end)
-
 setreadonly(mt, true)
