@@ -2,8 +2,8 @@ getgenv().AutoGuess = true
 
 getgenv().AutoPlay = true
 getgenv().Mode = "Practice" -- Battle, Frenzy, Expert, Master
-getgenv().Follow = "" -- if you want to follow someone (used in combination with Users below)
-getgenv().Users = {""} -- if you want to run a bot lobby for more xp, then add your alts usernames seperated by a comma here
+getgenv().Follow = "" -- if you want to follow someone (in combination with Users below)
+getgenv().Users = {"IlIlIllllIIIlIlIllII"} -- if you want to run a bot lobby for more xp, then add your alts usernames seperated by a comma here
 
 local function replace(str, pos, char)
 	if #str:sub(pos - #str) == 5 then 
@@ -71,7 +71,7 @@ game.ReplicatedStorage.Remotes.SubmitGuess.OnClientEvent:Connect(function(p25, p
 			end
 		end
 
-		if not table.find(string.split(correct, ""), "_") then
+		if not table.find(string.split(correct, ""), "_") and word ~= nil then
 			print("WORD #".. tostring(index + 1)..": "..word)
 		end
 
@@ -102,13 +102,13 @@ if getgenv().AutoGuess == true then
 		for i,v in pairs(workspace.GameSlots:GetChildren()) do 
 			v.ChildAdded:Connect(function(child)
 				if child.Name == "Panel_"..getgenv().Follow then
-					wait(2)
+					wait(4)
 					game.ReplicatedStorage.Remotes.SubmitGuess:FireServer("PLATE", 1)
 				end
 			end)
 		end
 	end
-	if getgenv().Follow == game.Players.LocalPlayer.Name then
+	if getgenv().Follow ~= "" and getgenv().Follow == game.Players.LocalPlayer.Name then
 		print("You are the leader")
 		for i,v in pairs(workspace.GameSlots:GetChildren()) do 
 			v.ChildAdded:Connect(function(child)
@@ -160,7 +160,27 @@ game.ReplicatedStorage.Remotes.GameOver.OnClientEvent:Connect(function()
 				end)
 			end
 		end
-		if getgenv().Follow == game.Players.LocalPlayer.Name then
+		if getgenv().Follow ~= "" and getgenv().Follow == game.Players.LocalPlayer.Name then
+			local players = {}
+			for i,v in pairs(game.Players:GetChildren()) do 
+				if table.find(getgenv().Users, v.Name) then
+					table.insert(players, v.Name)
+				end
+			end
+			game.Players.PlayerAdded:Connect(function(plr)
+				if not table.find(players, plr.Name) and table.find(getgenv().Users, plr.Name) then
+					table.insert(players, plr.Name)
+				end
+			end)
+			game.Players.PlayerRemoving:Connect(function(plr)
+				if table.find(players, plr.Name) and table.find(getgenv().Users, plr.Name) then
+					table.remove(players,players[plr.Name])
+				end
+			end)
+
+
+			repeat wait(1) until table.unpack(players) == table.unpack(getgenv().Users)
+			print("made it further")
 			for i,v in pairs(workspace.GameSlots:GetChildren()) do 
 				if not v:FindFirstChildWhichIsA("Model") then
 					slot = v
@@ -174,18 +194,16 @@ game.ReplicatedStorage.Remotes.GameOver.OnClientEvent:Connect(function()
 			local names = {}
 			slot.UI.Players.ChildAdded:Connect(function(child)
 				if table.find(getgenv().Users, child.Name) then 
-					print(child.Name)
+					print(child.Name.. "Added")
 					table.insert(names, child.Name)
 				end
 			end)
 			slot.UI.Players.ChildRemoved:Connect(function(child)
 				if table.find(names, child.Name) then 
+					print(child.Name.. "Removed")
 					table.remove(names, names[child.Name])
 				end
 			end)
-			print(table.unpack(names))
-			print(table.unpack(getgenv().Users))
-			print(table.unpack(names) == table.unpack(getgenv().Users))
 			repeat wait(1) until table.unpack(names) == table.unpack(getgenv().Users)
 
 			game:GetService("ReplicatedStorage").Remotes.StartGame:FireServer(unpack(args))
