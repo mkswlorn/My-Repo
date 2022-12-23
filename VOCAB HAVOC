@@ -1,0 +1,102 @@
+
+local function replace(str, pos, char)
+	if #str:sub(pos - #str) == 5 then 
+		return str:sub(1, pos - 1) .. char
+	else
+		return str:sub(1, pos - 1) .. char .. str:sub(pos - #str)
+	end
+end
+
+local word;
+local absent1 = "";
+local correct = "_____";
+local index;
+
+--[[
+if p29 ~= 0 and p29 ~= nil then
+    index = p29 - 1
+    correct = "_____";
+    absent1 = "";
+    print(index, "returning")
+    return
+    end
+]]
+
+
+game.ReplicatedStorage.Remotes.SubmitGuess.OnClientEvent:Connect(function(p25, p26, p27, p28, p29)
+	if p29 ~= nil then
+		print("returning")
+		correct = "_____";
+		absent1 = "";
+		return
+	end
+	if p25 == true and word then
+		local present = "_____";
+		local absent = {};
+		local letters = string.split(word, "")
+		for i,v in pairs(letters) do 
+			if p26[i] == "present" then
+				--if not table.find(string.split(present, ""), v) then
+				present =  replace(present, i, v)  
+				--end
+			end
+			if p26[i] == "correct" then
+				--if not table.find(string.split(correct, ""), v) then
+				correct = replace(correct, i, v)
+				--end
+			end
+			if p26[i] == "absent" then
+				if not table.find(absent, v) and not table.find(string.split(absent1, ""), v) and not table.find(string.split(present, ""), v) and not table.find(string.split(correct, ""), v) then
+					table.insert(absent, v)
+				end
+			end
+		end
+		for i,v in pairs(absent) do 
+			absent1 = absent1..v
+		end
+--[[
+		local taa = {
+			absent1;
+			present;
+			correct;
+		}
+		print(table.unpack(taa))
+]]
+		local a = game:HttpGet("https://www.thewordfinder.com/wordle-solver/solve.php?w="..correct.."&b="..absent1.."&s=1&v="..present.."&")
+
+		local b = game.HttpService:JSONDecode(a)
+
+
+		print(#b["results"], table.unpack(b["results"]))
+
+		print("-------------------------------------")
+	end
+end)
+
+
+
+game.ReplicatedStorage.Remotes.GameOver.OnClientEvent:Connect(function()
+	absent1 = "";
+	--present = "_____";
+	correct = "_____";
+	--index = 0
+end)
+
+
+local mt = getrawmetatable(game)
+local backupnamecall = mt.__namecall
+setreadonly(mt, false)
+
+mt.__namecall = newcclosure(function(Self, ...)
+	local args = {...}
+	local method = getnamecallmethod()
+
+	if (method == "FireServer") then
+		if Self == game.ReplicatedStorage.Remotes.SubmitGuess then
+			word = args[1]
+		end
+	end
+	return backupnamecall(Self, ...)
+end)
+
+setreadonly(mt, true)
