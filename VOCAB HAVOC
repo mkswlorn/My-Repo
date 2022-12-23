@@ -10,27 +10,19 @@ end
 local word;
 local absent1 = "";
 local correct = "_____";
+local usedwords = {};
 local index;
-
---[[
-if p29 ~= 0 and p29 ~= nil then
-    index = p29 - 1
-    correct = "_____";
-    absent1 = "";
-    print(index, "returning")
-    return
-    end
-]]
-
 
 game.ReplicatedStorage.Remotes.SubmitGuess.OnClientEvent:Connect(function(p25, p26, p27, p28, p29)
 	if p29 ~= nil then
 		print("returning")
 		correct = "_____";
 		absent1 = "";
+		usedwords = {};
 		return
 	end
 	if p25 == true and word then
+		table.insert(usedwords, word)
 		local present = "_____";
 		local absent = {};
 		local letters = string.split(word, "")
@@ -45,6 +37,8 @@ game.ReplicatedStorage.Remotes.SubmitGuess.OnClientEvent:Connect(function(p25, p
 				correct = replace(correct, i, v)
 				--end
 			end
+		end
+		for i,v in pairs(letters) do 
 			if p26[i] == "absent" then
 				if not table.find(absent, v) and not table.find(string.split(absent1, ""), v) and not table.find(string.split(present, ""), v) and not table.find(string.split(correct, ""), v) then
 					table.insert(absent, v)
@@ -54,20 +48,23 @@ game.ReplicatedStorage.Remotes.SubmitGuess.OnClientEvent:Connect(function(p25, p
 		for i,v in pairs(absent) do 
 			absent1 = absent1..v
 		end
---[[
 		local taa = {
 			absent1;
 			present;
 			correct;
 		}
 		print(table.unpack(taa))
-]]
+
 		local a = game:HttpGet("https://www.thewordfinder.com/wordle-solver/solve.php?w="..correct.."&b="..absent1.."&s=1&v="..present.."&")
 
 		local b = game.HttpService:JSONDecode(a)
-
-
-		print(#b["results"], table.unpack(b["results"]))
+		local results = {}
+		for i,v in pairs(b["results"]) do 
+			if not table.find(usedwords, v:upper()) then
+				table.insert(results, v:upper())
+			end
+		end
+		print(#results, table.unpack(results))
 
 		print("-------------------------------------")
 	end
@@ -77,9 +74,9 @@ end)
 
 game.ReplicatedStorage.Remotes.GameOver.OnClientEvent:Connect(function()
 	absent1 = "";
-	--present = "_____";
 	correct = "_____";
-	--index = 0
+	usedwords = {};
+	print("returning")
 end)
 
 
