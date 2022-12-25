@@ -1,4 +1,4 @@
-getgenv().AutoGuess = true -- will print possible words in console if off
+getgenv().AutoGuess = true -- if off it will print words in console 
 
 getgenv().AutoPlay = false
 getgenv().Mode = "Practice"
