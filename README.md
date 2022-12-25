@@ -1,4 +1,4 @@
-### *GAME* / **SCRIPT LINKS**
+### **SCRIPT LINKS**
 
 ## [Eclipsis Gui v2](https://www.roblox.com/games/632574862/Eclipsis)
 
