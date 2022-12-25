@@ -1,0 +1,231 @@
+getgenv().AutoGuess = true -- will print possible words in console if off
+
+getgenv().AutoPlay = false
+getgenv().Mode = "Practice"
+getgenv().Follow = "" -- if you want to follow someone (in combination with Users)
+getgenv().Users = {""} -- if you want to run a bot lobby for more xp, then add your alts usernames seperated by a comma here, and add this script to autoexec folder
+
+local function replace(str, pos, char)
+	if #str:sub(pos - #str) == 5 then 
+		return str:sub(1, pos - 1) .. char
+	else
+		return str:sub(1, pos - 1) .. char .. str:sub(pos - #str)
+	end
+end
+
+local word;
+local absent1 = "";
+local correct = "_____";
+local usedwords = {};
+local badwords = "acock agora arses asses balls bally bigot bitch boink boner bongs boobs booby booty booze boozy breed bulge butte butts butty buxom chink clits cocks cocky comte cooch coons craps cunts daddy damns darky desex dicks dicky dildo donga dongs doozy dopey drugs drunk dyked dykes dykey enema erect ester faggy fagin fagot fanny farts fecal frock fucks fussy gayal gayer gayly goned gooky groin grope gussy hemps hempy hoers homos horny hussy kikes kinks kinky knobs labia lesbo loins lubed lubes luved lynch mahoe mirth moans mussy nonce noose nuder nudes opium penis pervo pervy pissy poops poopy porno porns porny prick pubes pubic pubis pupal pussy queer randy raped rapes semen sexed sexer sexto sexts shaft shags shite shits skeet skink slave sluts snuff spank sperm spick spics spiks spunk swank taint teats testy throb titis titre titty trump turds twats twink unsex urine veiny vulva vying wench wanks whore willy wussy"
+
+local index = 0
+game.ReplicatedStorage.Remotes.SubmitGuess.OnClientEvent:Connect(function(p25, p26, p27, p28, p29)
+	if p29 ~= nil and word ~= nil then
+		index = index + 1
+		print("WORD #".. tostring(index)..": "..word)
+		correct = "_____";
+		absent1 = "";
+		usedwords = {};
+		if getgenv().AutoGuess == true then
+			game.ReplicatedStorage.Remotes.SubmitGuess:FireServer("PLATE", 1)
+		end
+		return
+	end
+	if p25 == true and word then
+		table.insert(usedwords, word)
+		local present = "_____";
+		local absent = {};
+		local letters = string.split(word, "")
+		for i,v in pairs(letters) do 
+			if p26[i] == "present" then
+				present =  replace(present, i, v)  
+			end
+			if p26[i] == "correct" then
+				correct = replace(correct, i, v)
+			end
+		end
+		for i,v in pairs(letters) do 
+			if p26[i] == "absent" then
+				if not table.find(absent, v) and not table.find(string.split(absent1, ""), v) and not table.find(string.split(present, ""), v) and not table.find(string.split(correct, ""), v) then
+					table.insert(absent, v)
+				end
+			end
+		end
+		for i,v in pairs(absent) do 
+			absent1 = absent1..v
+		end
+		local taa = {
+			absent1;
+			present;
+			correct;
+		}
+		--print(table.unpack(taa))
+		local a = game:HttpGet("https://www.thewordfinder.com/wordle-solver/solve.php?w="..correct.."&b="..absent1.."&s=1&v="..present.."&")
+		local b = game.HttpService:JSONDecode(a)
+		local results = {}
+		for i,v in pairs(b["results"]) do 
+			if not table.find(usedwords, v:upper()) and not table.find(string.split(badwords, " "),  v:lower())then
+				table.insert(results, v:upper())
+			end
+		end
+		if not table.find(string.split(correct, ""), "_") and word ~= nil then
+			print("WORD #".. tostring(index + 1)..": "..word)
+		end
+		if getgenv().AutoGuess == true and #results ~= nil and #results ~= 0 then
+			local result = results[math.random(1, #results)]
+			game.ReplicatedStorage.Remotes.SubmitGuess:FireServer(result, p28 + 1)
+		else
+			print(table.unpack(results))
+
+			print("-------------------------------------")
+		end
+	end
+end)
+
+if getgenv().AutoGuess == true then
+	if getgenv().Follow == "" then
+		for i,v in pairs(workspace.GameSlots:GetChildren()) do 
+			v.ChildAdded:Connect(function(child)
+				if child.Name == "Panel_"..tostring(game.Players.LocalPlayer.Name) then
+					wait(2)
+					game.ReplicatedStorage.Remotes.SubmitGuess:FireServer("PLATE", 1)
+				end
+			end)
+		end
+	end
+	if getgenv().Follow ~= "" and getgenv().Follow ~= game.Players.LocalPlayer.Name and table.find(getgenv().Users, game.Players.LocalPlayer.Name) then
+		for i,v in pairs(workspace.GameSlots:GetChildren()) do 
+			v.ChildAdded:Connect(function(child)
+				if child.Name == "Panel_"..getgenv().Follow then
+					wait(4)
+					game.ReplicatedStorage.Remotes.SubmitGuess:FireServer("PLATE", 1)
+				end
+			end)
+		end
+	end
+	if getgenv().Follow ~= "" and getgenv().Follow == game.Players.LocalPlayer.Name then
+		for i,v in pairs(workspace.GameSlots:GetChildren()) do 
+			v.ChildAdded:Connect(function(child)
+				if child.Name == "Panel_"..game.Players.LocalPlayer.Name then
+					wait(2)
+					game.ReplicatedStorage.Remotes.SubmitGuess:FireServer("PLATE", 1)
+				end
+			end)
+		end
+	end
+end
+local function getplayers()
+	local players = {}
+	for i,v in pairs(game.Players:GetChildren()) do 
+		if table.find(getgenv().Users, v.Name) then
+			table.insert(players, v.Name)
+		end
+	end
+	return table.unpack(players)
+end
+local function slotplayers(slot)
+	local names = {}
+	for i,v in pairs(slot.UI.Players:GetChildren()) do 
+		if v ~= nil and table.find(getgenv().Users, v.Name) then 
+			table.insert(names, v.Name)
+		end
+	end
+	return table.unpack(names)
+end
+
+local function play()
+	local slot;
+	local args = {
+		[1] = {
+			["Privacy"] = 0,
+			["Words"] = 3,
+			["TimerGame"] = 120,
+			["Color"] = nil --[[Color3]],
+			["Anchored"] = true,
+			["Lockdown"] = true,
+			["Letters"] = 5,
+			["Guesses"] = 0,
+			["Pre_Correct"] = 0,
+			["Pre_Present"] = 0,
+			["Players"] = 100,
+			["TimerRows"] = 60
+		},
+		[2] = true,
+		[3] = getgenv().Mode
+	}
+	if getgenv().Follow == "" then
+		for i,v in pairs(workspace.GameSlots:GetChildren()) do 
+			if not v:FindFirstChildWhichIsA("Model") then
+				slot = v
+				game:GetService("ReplicatedStorage").Remotes.GoToSlot:FireServer(v)
+				break
+			end
+		end
+		game:GetService("ReplicatedStorage").Remotes.ChooseMode:FireServer(unpack(args))
+		wait(1)
+		game:GetService("ReplicatedStorage").Remotes.StartGame:FireServer(unpack(args))
+	end
+	if getgenv().Follow ~= "" and getgenv().Follow ~= game.Players.LocalPlayer.Name and table.find(getgenv().Users, game.Players.LocalPlayer.Name) then
+		for i,v in pairs(workspace.GameSlots:GetChildren()) do 
+			v.UI.Players.ChildAdded:Connect(function(child)
+				if child.Name == getgenv().Follow then
+					wait(2)
+					game:GetService("ReplicatedStorage").Remotes.GoToSlot:FireServer(v)
+				end
+			end)
+		end
+	end
+	if getgenv().Follow ~= "" and getgenv().Follow == game.Players.LocalPlayer.Name then
+		--repeat wait(1) until getplayers() == table.unpack(getgenv().Users)
+		for i,v in pairs(workspace.GameSlots:GetChildren()) do 
+			if not v:FindFirstChildWhichIsA("Model") then
+				slot = v
+				game:GetService("ReplicatedStorage").Remotes.GoToSlot:FireServer(v)
+				break
+			end
+		end
+		game:GetService("ReplicatedStorage").Remotes.ChooseMode:FireServer(unpack(args))
+		wait(1)
+		--repeat wait(1) until slotplayers(slot) == table.unpack(getgenv().Users)
+
+		game:GetService("ReplicatedStorage").Remotes.StartGame:FireServer(unpack(args))
+	end
+end
+if getgenv().AutoPlay == true then
+	play()
+end
+game.ReplicatedStorage.Remotes.GameOver.OnClientEvent:Connect(function()
+	absent1 = "";
+	correct = "_____";
+	usedwords = {};
+	index = 0;
+	print("returning")
+	wait(3)
+	if getgenv().AutoPlay == true then
+		play()
+	end
+end)
+for i,v in pairs(getconnections(game.Players.LocalPlayer.Idled)) do
+	v:Disable()
+end
+local VirtualUser=game:service'VirtualUser'
+game:service'Players'.LocalPlayer.Idled:connect(function()
+	VirtualUser:CaptureController()
+	VirtualUser:ClickButton2(Vector2.new())
+end)
+local mt = getrawmetatable(game)
+local backupnamecall = mt.__namecall
+setreadonly(mt, false)
+mt.__namecall = newcclosure(function(Self, ...)
+	local args = {...}
+	local method = getnamecallmethod()
+
+	if (method == "FireServer") then
+		if Self == game.ReplicatedStorage.Remotes.SubmitGuess then
+			word = args[1]
+		end
+	end
+	return backupnamecall(Self, ...)
+end)
+setreadonly(mt, true)
