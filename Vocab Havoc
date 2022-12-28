@@ -87,10 +87,9 @@ local Slider = Tab:CreateSlider({
 	Increment = 1,
 	Suffix = "Seconds",
 	CurrentValue = 1,
-	Flag = "Slider1", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+	Flag = "Slider1",
 	Callback = function(Value)
-		-- The function that takes place when the slider changes
-		-- The variable (Value) is a number which correlates to the value the slider is currently at
+
 	end,
 })
 
@@ -100,14 +99,11 @@ local Section = Tab:CreateSection("Auto-Play")
 local Toggle2 = Tab:CreateToggle({
 	Name = "On",
 	CurrentValue = false,
-	Flag = "Toggle2", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+	Flag = "Toggle2",
 	Callback = function(Value)
 		if Value == true then
 			play()
 		end
-
-		-- The function that takes place when the toggle is pressed
-		-- The variable (Value) is a boolean on whether the toggle is true or false
 	end,
 })
 
@@ -115,11 +111,9 @@ Dropdown = Tab:CreateDropdown({
 	Name = "Join Player",
 	Options = playerlist,
 	CurrentOption = "",
-	Flag = "Dropdown1", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+	Flag = "Dropdown1", 
 	Callback = function(Option)
-		--print(Option)
-		-- The function that takes place when the selected option is changed
-		-- The variable (Option) is a string for the value that the dropdown was changed to
+
 	end,
 })
 
@@ -181,6 +175,7 @@ game.ReplicatedStorage.Remotes.SubmitGuess.OnClientEvent:Connect(function(p25, p
 		correct = "_____";
 		absent1 = "";
 		usedwords = {};
+		Paragraph1:Set({Title = "Word List", Content = ""})
 		if Toggle1.CurrentValue == true then
 			--typeout("PLATE")
 			game.ReplicatedStorage.Remotes.SubmitGuess:FireServer("PLATE", 1)
@@ -295,11 +290,11 @@ for i,v in pairs(workspace.GameSlots:GetChildren()) do
 		end
 	end)
 	v.UI.Players.ChildAdded:Connect(function(child)
-						if child.Name == Dropdown.CurrentOption and Dropdown.CurrentOption ~= "" and game.Players:FindFirstChild(Dropdown.CurrentOption) and Dropdown.CurrentOption ~= game.Players.LocalPlayer.Name and Toggle2.CurrentValue == true then
-							wait(2)
-							game:GetService("ReplicatedStorage").Remotes.GoToSlot:FireServer(v)
-						end
-					end)
+		if child.Name == Dropdown.CurrentOption and Dropdown.CurrentOption ~= "" and game.Players:FindFirstChild(Dropdown.CurrentOption) and Dropdown.CurrentOption ~= game.Players.LocalPlayer.Name and Toggle2.CurrentValue == true then
+			wait(2)
+			game:GetService("ReplicatedStorage").Remotes.GoToSlot:FireServer(v)
+		end
+	end)
 end
 
 if Toggle2.CurrentValue == true then
