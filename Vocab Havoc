@@ -120,6 +120,8 @@ Dropdown = Tab:CreateDropdown({
 if getgenv().Follow ~= nil and getgenv().Follow ~= "" then
     Dropdown:Set(getgenv().Follow)
     Toggle2:Set(true)
+    Toggle1:Set(true)
+    Slider:Set(0)
     end
 
 game.Players.PlayerAdded:Connect(function(player)
