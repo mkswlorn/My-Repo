@@ -117,11 +117,11 @@ Dropdown = Tab:CreateDropdown({
 	end,
 })
 
-if getgenv().Follow ~= nil and getgenv().Follow ~= "" then
+if getgenv().Follow ~= nil and getgenv().Follow ~= "" and getgenv().Delay ~= nil then
     Dropdown:Set(getgenv().Follow)
     Toggle2:Set(true)
     Toggle1:Set(true)
-    Slider:Set(0)
+    Slider:Set(getgenv().Delay)
     end
 
 game.Players.PlayerAdded:Connect(function(player)
