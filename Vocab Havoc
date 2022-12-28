@@ -4,6 +4,7 @@ local Rayfield = loadstring(game:HttpGet('https://raw.githubusercontent.com/UI-I
 local word1;
 local w2;
 local Dropdown;
+local Dropdown2;
 local playerlist = {""}
 for i,v in pairs(game.Players:GetPlayers())do
 	if v ~= game.Players.LocalPlayer then
@@ -26,8 +27,8 @@ local function play()
 				["Words"] = 1,
 				["TimerGame"] = 120,
 				["Color"] = nil --[[Color3]],
-				["Anchored"] = true,
-				["Lockdown"] = true,
+				["Anchored"] = false,
+				["Lockdown"] = false,
 				["Letters"] = 5,
 				["Guesses"] = 0,
 				["Pre_Correct"] = 0,
@@ -38,6 +39,44 @@ local function play()
 			[2] = true,
 			[3] = "Practice"
 		}
+		if Dropdown2.CurrentOption ~= "" then
+			if Dropdown2.CurrentOption == "Practice" then
+				args[1]["Privacy"] = 2
+				args[1]["Players"] = 1
+			end
+			if Dropdown2.CurrentOption == "Battle" then
+				args[1]["TimerRows"] = 90
+				args[1]["TimerGame"] = 600
+				args[3] = "Battle"
+			end
+			if Dropdown2.CurrentOption == "Frenzy" then
+				args[1]["Color"] = Color3.fromRGB(255, 221, 133)
+				args[1]["Words"] = 3
+				args[1]["TimerRows"] = 75
+				args[1]["TimerGame"] = 300
+				args[1]["Guesses"] = 6
+				args[1]["Pre_Present"] = 3
+				args[3] = "Frenzy"
+			end
+			if Dropdown2.CurrentOption == "Expert" then
+				args[1]["Color"] = Color3.fromRGB(255, 130, 130)
+				args[1]["TimerRows"] = 60
+				args[1]["TimerGame"] = 120
+				args[1]["Guesses"] = 6
+				args[3] = "Expert"
+			end
+			if Dropdown2.CurrentOption == "Master" then
+				args[1]["Words"] = 3
+				args[1]["Color"] = Color3.fromRGB(191, 135, 255)
+				args[1]["TimerRows"] = 60
+				args[1]["TimerGame"] = 120
+				args[1]["Guesses"] = 6
+				args[1]["Anchored"] = true
+				args[1]["Lockdown"] = true
+				args[3] = "Master"
+			end
+		end
+
 		if Dropdown.CurrentOption == "" then
 			for i,v in pairs(workspace.GameSlots:GetChildren()) do 
 				if not v:FindFirstChildWhichIsA("Model") then
@@ -107,6 +146,17 @@ local Toggle2 = Tab:CreateToggle({
 	end,
 })
 
+Dropdown2 = Tab:CreateDropdown({
+	Name = "Mode",
+	Options = {"Practice", "Battle", "Frenzy", "Expert", "Master"},
+	CurrentOption = "",
+	Flag = "Dropdown2", 
+	Callback = function(Option)
+
+	end,
+})
+
+
 Dropdown = Tab:CreateDropdown({
 	Name = "Join Player",
 	Options = playerlist,
@@ -118,11 +168,11 @@ Dropdown = Tab:CreateDropdown({
 })
 
 if getgenv().Follow ~= nil and getgenv().Follow ~= "" and getgenv().Delay ~= nil then
-    Dropdown:Set(getgenv().Follow)
-    Toggle2:Set(true)
-    Toggle1:Set(true)
-    Slider:Set(getgenv().Delay)
-    end
+	Dropdown:Set(getgenv().Follow)
+	Toggle2:Set(true)
+	Toggle1:Set(true)
+	Slider:Set(getgenv().Delay)
+end
 
 game.Players.PlayerAdded:Connect(function(player)
 	local name = player.Name
@@ -182,6 +232,7 @@ game.ReplicatedStorage.Remotes.SubmitGuess.OnClientEvent:Connect(function(p25, p
 		correct = "_____";
 		absent1 = "";
 		usedwords = {};
+
 		Paragraph1:Set({Title = "Word List", Content = ""})
 		if Toggle1.CurrentValue == true then
 			--typeout("PLATE")
@@ -298,6 +349,7 @@ for i,v in pairs(workspace.GameSlots:GetChildren()) do
 	end)
 	v.UI.Players.ChildAdded:Connect(function(child)
 		if (child.Name == Dropdown.CurrentOption and Dropdown.CurrentOption ~= "" and game.Players:FindFirstChild(Dropdown.CurrentOption) and Dropdown.CurrentOption ~= game.Players.LocalPlayer.Name and Toggle2.CurrentValue == true) then
+			game:GetService("ReplicatedStorage").Remotes.ChooseMode:FireServer({}, false)
 			wait(2)
 			game:GetService("ReplicatedStorage").Remotes.GoToSlot:FireServer(v)
 		end
