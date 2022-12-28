@@ -117,6 +117,11 @@ Dropdown = Tab:CreateDropdown({
 	end,
 })
 
+if getgenv().Follow ~= nil and getgenv().Follow ~= "" then
+    Dropdown:Set(getgenv().Follow)
+    Toggle2:Set(true)
+    end
+
 game.Players.PlayerAdded:Connect(function(player)
 	local name = player.Name
 	table.insert(playerlist,name)
@@ -290,7 +295,7 @@ for i,v in pairs(workspace.GameSlots:GetChildren()) do
 		end
 	end)
 	v.UI.Players.ChildAdded:Connect(function(child)
-		if child.Name == Dropdown.CurrentOption and Dropdown.CurrentOption ~= "" and game.Players:FindFirstChild(Dropdown.CurrentOption) and Dropdown.CurrentOption ~= game.Players.LocalPlayer.Name and Toggle2.CurrentValue == true then
+		if (child.Name == Dropdown.CurrentOption and Dropdown.CurrentOption ~= "" and game.Players:FindFirstChild(Dropdown.CurrentOption) and Dropdown.CurrentOption ~= game.Players.LocalPlayer.Name and Toggle2.CurrentValue == true) then
 			wait(2)
 			game:GetService("ReplicatedStorage").Remotes.GoToSlot:FireServer(v)
 		end
