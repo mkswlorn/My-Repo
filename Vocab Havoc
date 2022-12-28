@@ -1,9 +1,162 @@
-getgenv().AutoGuess = true -- if off it will print words in console 
 
-getgenv().AutoPlay = false
-getgenv().Mode = "Practice"
-getgenv().Follow = "" -- if you want to follow someone (in combination with Users)
-getgenv().Users = {""} -- if you want to run a bot lobby for more xp, then add your alts usernames seperated by a comma here, and add this script to autoexec folder
+local Rayfield = loadstring(game:HttpGet('https://raw.githubusercontent.com/UI-Interface/CustomFIeld/main/RayField.lua'))()
+
+local word1;
+local w2;
+local Dropdown;
+local playerlist = {""}
+for i,v in pairs(game.Players:GetPlayers())do
+	if v ~= game.Players.LocalPlayer then
+		table.insert(playerlist,v.Name)
+	end
+end
+local function typeout(word)
+	for i = 1, 5 do 
+		local split1 = string.split(word, "")
+		local r = game:GetService("Players").LocalPlayer.PlayerScripts.Main.Typed
+		r:Fire(split1[i])
+	end
+end
+
+local function play()
+	pcall(function()
+		local args = {
+			[1] = {
+				["Privacy"] = 0,
+				["Words"] = 1,
+				["TimerGame"] = 120,
+				["Color"] = nil --[[Color3]],
+				["Anchored"] = true,
+				["Lockdown"] = true,
+				["Letters"] = 5,
+				["Guesses"] = 0,
+				["Pre_Correct"] = 0,
+				["Pre_Present"] = 0,
+				["Players"] = 100,
+				["TimerRows"] = 60
+			},
+			[2] = true,
+			[3] = "Practice"
+		}
+		if Dropdown.CurrentOption == "" then
+			for i,v in pairs(workspace.GameSlots:GetChildren()) do 
+				if not v:FindFirstChildWhichIsA("Model") then
+					game:GetService("ReplicatedStorage").Remotes.GoToSlot:FireServer(v)
+					break
+				end
+			end
+			game:GetService("ReplicatedStorage").Remotes.ChooseMode:FireServer(unpack(args))
+			wait(1)
+			game:GetService("ReplicatedStorage").Remotes.StartGame:FireServer(unpack(args))
+		end
+	end)
+end
+
+local Window = Rayfield:CreateWindow({
+	Name = "Vocab Havoc",
+	LoadingTitle = "Rayfield Interface Suite",
+	LoadingSubtitle = "by Sirius",
+	ConfigurationSaving = {
+		Enabled = true,
+		FolderName = nil,
+		FileName = "Big Hub"
+	},
+	Discord = {
+		Enabled = false,
+		Invite = "sirius",
+		RememberJoins = true 
+	},
+	KeySystem = false, 
+})
+
+local Tab = Window:CreateTab("Auto") 
+
+local Section = Tab:CreateSection("Auto-Guess")
+
+local Toggle1 = Tab:CreateToggle({
+	Name = "On",
+	CurrentValue = false,
+	Flag = "Toggle1",
+	Callback = function(Value)
+	end,
+})
+
+local Slider = Tab:CreateSlider({
+	Name = "Delay",
+	Range = {0, 6},
+	Increment = 1,
+	Suffix = "Seconds",
+	CurrentValue = 1,
+	Flag = "Slider1", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+	Callback = function(Value)
+		-- The function that takes place when the slider changes
+		-- The variable (Value) is a number which correlates to the value the slider is currently at
+	end,
+})
+
+
+local Section = Tab:CreateSection("Auto-Play")
+
+local Toggle2 = Tab:CreateToggle({
+	Name = "On",
+	CurrentValue = false,
+	Flag = "Toggle2", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+	Callback = function(Value)
+		if Value == true then
+			play()
+		end
+
+		-- The function that takes place when the toggle is pressed
+		-- The variable (Value) is a boolean on whether the toggle is true or false
+	end,
+})
+
+Dropdown = Tab:CreateDropdown({
+	Name = "Join Player",
+	Options = playerlist,
+	CurrentOption = "",
+	Flag = "Dropdown1", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+	Callback = function(Option)
+		--print(Option)
+		-- The function that takes place when the selected option is changed
+		-- The variable (Option) is a string for the value that the dropdown was changed to
+	end,
+})
+
+game.Players.PlayerAdded:Connect(function(player)
+	local name = player.Name
+	table.insert(playerlist,name)
+	Dropdown:Add(name)
+end)
+
+game.Players.PlayerRemoving:Connect(function(player)
+	local name = player.Name
+	for i,v in pairs(playerlist)do
+		if v == name then  
+			Dropdown:Remove(v)
+		end
+	end
+end)
+
+
+local Tab = Window:CreateTab("Manual") -- Title, Image
+
+local Section = Tab:CreateSection("Manual")
+
+local Button = Tab:CreateButton({
+	Name = "Guess Word",
+	Callback = function()
+		if word1 ~= nil then
+			--typeout(word1)
+			game.ReplicatedStorage.Remotes.SubmitGuess:FireServer(word1, w2 + 1)
+		else
+			--typeout("PLATE")
+			game.ReplicatedStorage.Remotes.SubmitGuess:FireServer("PLATE", 1)
+		end
+	end,
+})
+
+local Paragraph1 = Tab:CreateParagraph({Title = "Word List", Content = ""})
 
 local function replace(str, pos, char)
 	if #str:sub(pos - #str) == 5 then 
@@ -20,6 +173,7 @@ local usedwords = {};
 local badwords = "acock agora arses asses balls bally bigot bitch boink boner bongs boobs booby booty booze boozy breed bulge butte butts butty buxom chink clits cocks cocky comte cooch coons craps cunts daddy damns darky desex dicks dicky dildo donga dongs doozy dopey drugs drunk dyked dykes dykey enema erect ester faggy fagin fagot fanny farts fecal frock fucks fussy gayal gayer gayly goned gooky groin grope gussy hemps hempy hoers homos horny hussy kikes kinks kinky knobs labia lesbo loins lubed lubes luved lynch mahoe mirth moans mussy nonce noose nuder nudes opium penis pervo pervy pissy poops poopy porno porns porny prick pubes pubic pubis pupal pussy queer randy raped rapes semen sexed sexer sexto sexts shaft shags shite shits skeet skink slave sluts snuff spank sperm spick spics spiks spunk swank taint teats testy throb titis titre titty trump turds twats twink unsex urine veiny vulva vying wench wanks whore willy wussy"
 
 local index = 0
+
 game.ReplicatedStorage.Remotes.SubmitGuess.OnClientEvent:Connect(function(p25, p26, p27, p28, p29)
 	if p29 ~= nil and word ~= nil then
 		index = index + 1
@@ -27,7 +181,8 @@ game.ReplicatedStorage.Remotes.SubmitGuess.OnClientEvent:Connect(function(p25, p
 		correct = "_____";
 		absent1 = "";
 		usedwords = {};
-		if getgenv().AutoGuess == true then
+		if Toggle1.CurrentValue == true then
+			--typeout("PLATE")
 			game.ReplicatedStorage.Remotes.SubmitGuess:FireServer("PLATE", 1)
 		end
 		return
@@ -72,137 +227,94 @@ game.ReplicatedStorage.Remotes.SubmitGuess.OnClientEvent:Connect(function(p25, p
 		if not table.find(string.split(correct, ""), "_") and word ~= nil then
 			print("WORD #".. tostring(index + 1)..": "..word)
 		end
-		if getgenv().AutoGuess == true and #results ~= nil and #results ~= 0 then
+		if #results ~= 0 and #results ~= nil then
+			local result12 = results[math.random(1, #results)]
+			word1 = result12
+			w2 = p28
+		end
+		if Toggle1.CurrentValue == true and #results ~= nil and #results ~= 0 then
 			local result = results[math.random(1, #results)]
-			game.ReplicatedStorage.Remotes.SubmitGuess:FireServer(result, p28 + 1)
-		else
-			print(table.unpack(results))
 
-			print("-------------------------------------")
+			if (Slider.CurrentValue >= 1 and Slider.CurrentValue <= 1.5) then
+				wait(1.8)
+			else
+				if Slider.CurrentValue ~= 0 then
+					wait(Slider.CurrentValue)
+				end
+			end
+			--typeout(result)
+			game.ReplicatedStorage.Remotes.SubmitGuess:FireServer(result, p28 + 1)
+			--[[
+			if Slider.CurrentValue >= 1 then
+				game:GetService("Players").LocalPlayer.PlayerScripts.Main.Typed:Fire("Return")
+			else
+				game.ReplicatedStorage.Remotes.SubmitGuess:FireServer(result, p28 + 1)
+			end--]]
+			local newresults = {}
+			if #results > 8 then
+				for i,z in pairs(results) do 
+					if not table.find(newresults, z) then
+						table.insert(newresults, z)
+					end
+					if i >= 8 then
+						break
+					end
+				end
+			else
+				newresults = results
+			end
+			Paragraph1:Set({Title = "Word List", Content = table.concat(newresults, " ")})
+		else
+			local newresults = {}
+			if #results > 8 then
+				for i,z in pairs(results) do 
+					if not table.find(newresults, z) then
+						table.insert(newresults, z)
+					end
+					if i >= 8 then
+						break
+					end
+				end
+			else
+				newresults = results
+			end
+			Paragraph1:Set({Title = "Word List", Content = table.concat(newresults, " ")})
 		end
 	end
 end)
 
-if getgenv().AutoGuess == true then
-	if getgenv().Follow == "" then
-		for i,v in pairs(workspace.GameSlots:GetChildren()) do 
-			v.ChildAdded:Connect(function(child)
-				if child.Name == "Panel_"..tostring(game.Players.LocalPlayer.Name) then
-					wait(2)
-					game.ReplicatedStorage.Remotes.SubmitGuess:FireServer("PLATE", 1)
-				end
-			end)
+for i,v in pairs(workspace.GameSlots:GetChildren()) do 
+	v.ChildAdded:Connect(function(child)
+		if child.Name == "Panel_"..tostring(game.Players.LocalPlayer.Name) and Toggle1.CurrentValue == true then
+			if Slider.CurrentValue ~= 0 then
+				--wait(3)
+			end
+			--typeout("PLATE")
+			wait()
+			game.ReplicatedStorage.Remotes.SubmitGuess:FireServer("PLATE", 1)
 		end
-	end
-	if getgenv().Follow ~= "" and getgenv().Follow ~= game.Players.LocalPlayer.Name and table.find(getgenv().Users, game.Players.LocalPlayer.Name) then
-		for i,v in pairs(workspace.GameSlots:GetChildren()) do 
-			v.ChildAdded:Connect(function(child)
-				if child.Name == "Panel_"..getgenv().Follow then
-					wait(4)
-					game.ReplicatedStorage.Remotes.SubmitGuess:FireServer("PLATE", 1)
-				end
-			end)
-		end
-	end
-	if getgenv().Follow ~= "" and getgenv().Follow == game.Players.LocalPlayer.Name then
-		for i,v in pairs(workspace.GameSlots:GetChildren()) do 
-			v.ChildAdded:Connect(function(child)
-				if child.Name == "Panel_"..game.Players.LocalPlayer.Name then
-					wait(2)
-					game.ReplicatedStorage.Remotes.SubmitGuess:FireServer("PLATE", 1)
-				end
-			end)
-		end
-	end
-end
-local function getplayers()
-	local players = {}
-	for i,v in pairs(game.Players:GetChildren()) do 
-		if table.find(getgenv().Users, v.Name) then
-			table.insert(players, v.Name)
-		end
-	end
-	return table.unpack(players)
-end
-local function slotplayers(slot)
-	local names = {}
-	for i,v in pairs(slot.UI.Players:GetChildren()) do 
-		if v ~= nil and table.find(getgenv().Users, v.Name) then 
-			table.insert(names, v.Name)
-		end
-	end
-	return table.unpack(names)
+	end)
+	v.UI.Players.ChildAdded:Connect(function(child)
+						if child.Name == Dropdown.CurrentOption and Dropdown.CurrentOption ~= "" and game.Players:FindFirstChild(Dropdown.CurrentOption) and Dropdown.CurrentOption ~= game.Players.LocalPlayer.Name and Toggle2.CurrentValue == true then
+							wait(2)
+							game:GetService("ReplicatedStorage").Remotes.GoToSlot:FireServer(v)
+						end
+					end)
 end
 
-local function play()
-	local slot;
-	local args = {
-		[1] = {
-			["Privacy"] = 0,
-			["Words"] = 3,
-			["TimerGame"] = 120,
-			["Color"] = nil --[[Color3]],
-			["Anchored"] = true,
-			["Lockdown"] = true,
-			["Letters"] = 5,
-			["Guesses"] = 0,
-			["Pre_Correct"] = 0,
-			["Pre_Present"] = 0,
-			["Players"] = 100,
-			["TimerRows"] = 60
-		},
-		[2] = true,
-		[3] = getgenv().Mode
-	}
-	if getgenv().Follow == "" then
-		for i,v in pairs(workspace.GameSlots:GetChildren()) do 
-			if not v:FindFirstChildWhichIsA("Model") then
-				slot = v
-				game:GetService("ReplicatedStorage").Remotes.GoToSlot:FireServer(v)
-				break
-			end
-		end
-		game:GetService("ReplicatedStorage").Remotes.ChooseMode:FireServer(unpack(args))
-		wait(1)
-		game:GetService("ReplicatedStorage").Remotes.StartGame:FireServer(unpack(args))
-	end
-	if getgenv().Follow ~= "" and getgenv().Follow ~= game.Players.LocalPlayer.Name and table.find(getgenv().Users, game.Players.LocalPlayer.Name) then
-		for i,v in pairs(workspace.GameSlots:GetChildren()) do 
-			v.UI.Players.ChildAdded:Connect(function(child)
-				if child.Name == getgenv().Follow then
-					wait(2)
-					game:GetService("ReplicatedStorage").Remotes.GoToSlot:FireServer(v)
-				end
-			end)
-		end
-	end
-	if getgenv().Follow ~= "" and getgenv().Follow == game.Players.LocalPlayer.Name then
-		--repeat wait(1) until getplayers() == table.unpack(getgenv().Users)
-		for i,v in pairs(workspace.GameSlots:GetChildren()) do 
-			if not v:FindFirstChildWhichIsA("Model") then
-				slot = v
-				game:GetService("ReplicatedStorage").Remotes.GoToSlot:FireServer(v)
-				break
-			end
-		end
-		game:GetService("ReplicatedStorage").Remotes.ChooseMode:FireServer(unpack(args))
-		wait(1)
-		--repeat wait(1) until slotplayers(slot) == table.unpack(getgenv().Users)
-
-		game:GetService("ReplicatedStorage").Remotes.StartGame:FireServer(unpack(args))
-	end
-end
-if getgenv().AutoPlay == true then
+if Toggle2.CurrentValue == true then
 	play()
 end
 game.ReplicatedStorage.Remotes.GameOver.OnClientEvent:Connect(function()
+	Paragraph1:Set({Title = "Word List", Content = ""})
+	word1 = nil
 	absent1 = "";
 	correct = "_____";
 	usedwords = {};
 	index = 0;
-	print("returning")
+	print("")
 	wait(3)
-	if getgenv().AutoPlay == true then
+	if Toggle2.CurrentValue == true then
 		play()
 	end
 end)
@@ -229,3 +341,11 @@ mt.__namecall = newcclosure(function(Self, ...)
 	return backupnamecall(Self, ...)
 end)
 setreadonly(mt, true)
+
+spawn(function()
+	while wait(1) do 
+		if Toggle2.CurrentValue == true and game:GetService("Players").LocalPlayer.PlayerGui.ScreenGui.FinishedPanel.Visible == true then
+			game:GetService("ReplicatedStorage").Remotes.OptOut:FireServer()
+		end
+	end
+end)
