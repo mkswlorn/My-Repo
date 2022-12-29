@@ -1,11 +1,16 @@
 
 local Rayfield = loadstring(game:HttpGet('https://raw.githubusercontent.com/UI-Interface/CustomFIeld/main/RayField.lua'))()
 
+--getgenv().Follow = "player"
+--getgenv().Delay = 0
+--getgenv().DelayJoin = true
+
 local word1;
 local w2;
 local Dropdown;
 local Dropdown2;
 local playerlist = {""}
+local index = 0
 for i,v in pairs(game.Players:GetPlayers())do
 	if v ~= game.Players.LocalPlayer then
 		table.insert(playerlist,v.Name)
@@ -223,7 +228,6 @@ local correct = "_____";
 local usedwords = {};
 local badwords = "acock agora arses asses balls bally bigot bitch boink boner bongs boobs booby booty booze boozy breed bulge butte butts butty buxom chink clits cocks cocky comte cooch coons craps cunts daddy damns darky desex dicks dicky dildo donga dongs doozy dopey drugs drunk dyked dykes dykey enema erect ester faggy fagin fagot fanny farts fecal frock fucks fussy gayal gayer gayly goned gooky groin grope gussy hemps hempy hoers homos horny hussy kikes kinks kinky knobs labia lesbo loins lubed lubes luved lynch mahoe mirth moans mussy nonce noose nuder nudes opium penis pervo pervy pissy poops poopy porno porns porny prick pubes pubic pubis pupal pussy queer randy raped rapes semen sexed sexer sexto sexts shaft shags shite shits skeet skink slave sluts snuff spank sperm spick spics spiks spunk swank taint teats testy throb titis titre titty trump turds twats twink unsex urine veiny vulva vying wench wanks whore willy wussy"
 
-local index = 0
 
 game.ReplicatedStorage.Remotes.SubmitGuess.OnClientEvent:Connect(function(p25, p26, p27, p28, p29)
 	if p29 ~= nil and word ~= nil then
@@ -232,6 +236,7 @@ game.ReplicatedStorage.Remotes.SubmitGuess.OnClientEvent:Connect(function(p25, p
 		correct = "_____";
 		absent1 = "";
 		usedwords = {};
+		w2 = 0
 
 		Paragraph1:Set({Title = "Word List", Content = ""})
 		if Toggle1.CurrentValue == true then
@@ -351,6 +356,9 @@ for i,v in pairs(workspace.GameSlots:GetChildren()) do
 		if (child.Name == Dropdown.CurrentOption and Dropdown.CurrentOption ~= "" and game.Players:FindFirstChild(Dropdown.CurrentOption) and Dropdown.CurrentOption ~= game.Players.LocalPlayer.Name and Toggle2.CurrentValue == true) then
 			game:GetService("ReplicatedStorage").Remotes.ChooseMode:FireServer({}, false)
 			wait(2)
+			if getgenv().DelayJoin == true then
+				wait(math.random(0,6))
+			end
 			game:GetService("ReplicatedStorage").Remotes.GoToSlot:FireServer(v)
 		end
 	end)
@@ -395,11 +403,23 @@ mt.__namecall = newcclosure(function(Self, ...)
 	return backupnamecall(Self, ...)
 end)
 setreadonly(mt, true)
-
+if getgenv().DelayJoin == true then
+	local partnew = Instance.new('Part', game.Workspace)
+	partnew.Name = "partnew"
+	partnew.Size = Vector3.new(10,.1,10)
+	partnew.Color = Color3.fromRGB(100,166,200)
+	partnew.Position = Vector3.new(-492.533, 7038.89, -41.9808)
+	partnew.Anchored = true
+end
 spawn(function()
 	while wait(1) do 
 		if Toggle2.CurrentValue == true and game:GetService("Players").LocalPlayer.PlayerGui.ScreenGui.FinishedPanel.Visible == true then
 			game:GetService("ReplicatedStorage").Remotes.OptOut:FireServer()
+			if getgenv().DelayJoin == true then
+				wait(1)
+				local lpos = game:GetService("Players").LocalPlayer.Character.HumanoidRootPart.CFrame
+				game:GetService("Players").LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(Vector3.new(-492.533, 7042.89, -41.9808)) -- tp somewhere
+			end
 		end
 	end
 end)
