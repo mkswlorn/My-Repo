@@ -91,7 +91,9 @@ local function play()
 			end
 			game:GetService("ReplicatedStorage").Remotes.ChooseMode:FireServer(unpack(args))
 			wait(1)
+			for i = 1, 3 do 
 			game:GetService("ReplicatedStorage").Remotes.StartGame:FireServer(unpack(args))
+		    end
 		end
 	end)
 end
@@ -350,7 +352,7 @@ for i,v in pairs(workspace.GameSlots:GetChildren()) do
 			--typeout("PLATE")
 			wait()
 			if getgenv().Follow ~= nil and game.Players.LocalPlayer.Name ~= getgenv().Follow then 
-			    wait()
+			    --wait()
 			    end
 			game.ReplicatedStorage.Remotes.SubmitGuess:FireServer("PLATE", 1)
 		end
@@ -358,7 +360,7 @@ for i,v in pairs(workspace.GameSlots:GetChildren()) do
 	v.UI.Players.ChildAdded:Connect(function(child)
 		if (child.Name == Dropdown.CurrentOption and Dropdown.CurrentOption ~= "" and game.Players:FindFirstChild(Dropdown.CurrentOption) and Dropdown.CurrentOption ~= game.Players.LocalPlayer.Name and Toggle2.CurrentValue == true) then
 			game:GetService("ReplicatedStorage").Remotes.ChooseMode:FireServer({}, false)
-			wait(1)
+			
 			if getgenv().DelayJoin == true then
 				wait(math.random(0,6))
 			end
@@ -378,7 +380,7 @@ game.ReplicatedStorage.Remotes.GameOver.OnClientEvent:Connect(function()
 	usedwords = {};
 	index = 0;
 	print("")
-	wait(3)
+	wait(1)
 	if Toggle2.CurrentValue == true then
 		play()
 	end
@@ -415,7 +417,7 @@ if getgenv().DelayJoin == true then
 	partnew.Anchored = true
 end
 spawn(function()
-	while wait(1) do 
+	while wait(0.5) do 
 		if Toggle2.CurrentValue == true and game:GetService("Players").LocalPlayer.PlayerGui.ScreenGui.FinishedPanel.Visible == true then
 			game:GetService("ReplicatedStorage").Remotes.OptOut:FireServer()
 			if getgenv().DelayJoin == true then
