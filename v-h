@@ -380,7 +380,7 @@ game.ReplicatedStorage.Remotes.GameOver.OnClientEvent:Connect(function()
 	usedwords = {};
 	index = 0;
 	print("")
-	wait(3)
+	wait(1)
 	if Toggle2.CurrentValue == true then
 		play()
 	end
@@ -417,7 +417,7 @@ if getgenv().DelayJoin == true then
 	partnew.Anchored = true
 end
 spawn(function()
-	while wait(1) do 
+	while wait(0.2) do 
 		if Toggle2.CurrentValue == true and game:GetService("Players").LocalPlayer.PlayerGui.ScreenGui.FinishedPanel.Visible == true then
 			game:GetService("ReplicatedStorage").Remotes.OptOut:FireServer()
 			if getgenv().DelayJoin == true then
