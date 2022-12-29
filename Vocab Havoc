@@ -351,7 +351,7 @@ for i,v in pairs(workspace.GameSlots:GetChildren()) do
 			--typeout("PLATE")
 			wait()
 			if getgenv().Follow ~= nil and game.Players.LocalPlayer.Name ~= getgenv().Follow then 
-			    wait()
+			    wait(0.2)
 			    end
 			game.ReplicatedStorage.Remotes.SubmitGuess:FireServer("PLATE", 1)
 		end
