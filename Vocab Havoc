@@ -349,13 +349,16 @@ for i,v in pairs(workspace.GameSlots:GetChildren()) do
 			end
 			--typeout("PLATE")
 			wait()
+			if getgenv().Follow ~= nil and game.Players.LocalPlayer.Name ~= getgenv().Follow then 
+			    wait()
+			    end
 			game.ReplicatedStorage.Remotes.SubmitGuess:FireServer("PLATE", 1)
 		end
 	end)
 	v.UI.Players.ChildAdded:Connect(function(child)
 		if (child.Name == Dropdown.CurrentOption and Dropdown.CurrentOption ~= "" and game.Players:FindFirstChild(Dropdown.CurrentOption) and Dropdown.CurrentOption ~= game.Players.LocalPlayer.Name and Toggle2.CurrentValue == true) then
 			game:GetService("ReplicatedStorage").Remotes.ChooseMode:FireServer({}, false)
-			wait(2)
+			wait(1)
 			if getgenv().DelayJoin == true then
 				wait(math.random(0,6))
 			end
