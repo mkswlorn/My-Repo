@@ -1,6 +1,5 @@
 
 local Rayfield = loadstring(game:HttpGet('https://raw.githubusercontent.com/UI-Interface/CustomFIeld/main/RayField.lua'))()
-
 --getgenv().Follow = "player"
 --getgenv().Delay = 0
 --getgenv().DelayJoin = true
@@ -80,6 +79,12 @@ local function play()
 				args[1]["Lockdown"] = true
 				args[3] = "Master"
 			end
+			if Dropdown2.CurrentOption == "Fast" then
+				args[1]["Color"] = Color3.fromRGB(255, 130, 130)
+				args[1]["TimerRows"] = 20
+				args[1]["TimerGame"] = 20
+				args[3] = "Expert"
+			end
 		end
 
 		if Dropdown.CurrentOption == "" then
@@ -154,7 +159,7 @@ local Toggle2 = Tab:CreateToggle({
 
 Dropdown2 = Tab:CreateDropdown({
 	Name = "Mode",
-	Options = {"Practice", "Battle", "Frenzy", "Expert", "Master"},
+	Options = {"Practice", "Battle", "Frenzy", "Expert", "Master", "Fast"},
 	CurrentOption = "",
 	Flag = "Dropdown2", 
 	Callback = function(Option)
@@ -351,7 +356,7 @@ for i,v in pairs(workspace.GameSlots:GetChildren()) do
 			--typeout("PLATE")
 			wait()
 			if getgenv().Follow ~= nil and game.Players.LocalPlayer.Name ~= getgenv().Follow then 
-			    wait(0.2)
+			    wait(0.8)
 			    end
 			game.ReplicatedStorage.Remotes.SubmitGuess:FireServer("PLATE", 1)
 		end
