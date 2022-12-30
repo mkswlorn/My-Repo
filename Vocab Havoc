@@ -22,7 +22,6 @@ local function typeout(word)
 		r:Fire(split1[i])
 	end
 end
-
 local function play()
 	pcall(function()
 		local args = {
