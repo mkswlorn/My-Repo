@@ -142,7 +142,6 @@ local Slider = Tab:CreateSlider({
 	end,
 })
 
-
 local Section = Tab:CreateSection("Auto-Play")
 
 local Toggle2 = Tab:CreateToggle({
